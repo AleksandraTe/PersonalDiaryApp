@@ -1,20 +1,25 @@
 package com.example.personaldiaryapp
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.util.Log
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
-
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class NewNoteActivity : AppCompatActivity() {
     private lateinit var btnSave: Button
     private lateinit var btnUpdate: Button
-    private lateinit var edDate: EditText
+    private lateinit var tvDate: TextView
     private lateinit var edText: EditText
     private lateinit var sqliteHelper:SQLiteHelper
 
@@ -26,6 +31,9 @@ class NewNoteActivity : AppCompatActivity() {
         sqliteHelper = SQLiteHelper(this)
 
         val isNew = intent.getStringExtra("new")
+        val sdf = SimpleDateFormat("dd/M/yyyy")
+        val currentDate = sdf.format(Date())
+        tvDate.setText(currentDate)
 
         if(isNew == "true"){
             loadNewNoteView()
@@ -33,6 +41,9 @@ class NewNoteActivity : AppCompatActivity() {
         else{
             loadEditView()
         }
+
+        edText.requestFocus()
+
         btnSave.setOnClickListener {
             saveNote()
             val intent = Intent(this, MainActivity::class.java)
@@ -59,12 +70,12 @@ class NewNoteActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-        edDate.setText(date)
+        tvDate.setText(date)
         edText.setText(text)
     }
 
     private fun updateNote() {
-        val date = edDate.text.toString()
+        val date = tvDate.text.toString()
         val text = edText.text.toString()
         val id = intent.getIntExtra("ntId", 0)
         val nt = NoteModel(id = id, date = date, text = text)
@@ -81,9 +92,10 @@ class NewNoteActivity : AppCompatActivity() {
     }
 
     private fun saveNote() {
-        val date = edDate.text.toString()
-        val text = edText.text.toString()
 
+
+        val date = tvDate.text.toString()
+        val text = edText.text.toString()
         if(date.isEmpty() || text.isEmpty()) {
             Toast.makeText(this, "Please enter requried field", Toast.LENGTH_SHORT).show()
         } else {
@@ -102,13 +114,13 @@ class NewNoteActivity : AppCompatActivity() {
     }
 
     private fun clearEditText() {
-        edDate.setText("")
+        tvDate.setText("")
         edText.setText("")
-        edDate.requestFocus()
+        tvDate.requestFocus()
     }
 
     private fun initView() {
-        edDate = findViewById(R.id.edDate)
+        tvDate = findViewById(R.id.tvDate)
         edText = findViewById(R.id.edText)
         btnSave = findViewById(R.id.btnSave)
         btnUpdate = findViewById(R.id.btnUpdate)

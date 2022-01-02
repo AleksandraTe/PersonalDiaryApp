@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun getNotes() {
         val ntList = sqliteHelper.getAllNote()
-        Log.e("eeee", "${ntList.size}")
+        Log.e("error", "${ntList.size}")
 
         adapter?.addItems(ntList)
     }

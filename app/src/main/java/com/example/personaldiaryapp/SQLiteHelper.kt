@@ -39,7 +39,6 @@ class SQLiteHelper(context: Context) :
         val db = this.writableDatabase
 
         val contentValues = ContentValues()
-        contentValues.put(ID, nt.id)
         contentValues.put(DATE, nt.date)
         contentValues.put(TEXT, nt.text)
 
@@ -87,7 +86,6 @@ class SQLiteHelper(context: Context) :
         val db = this.writableDatabase
 
         val contentValues = ContentValues()
-        contentValues.put(ID, nt.id)
         contentValues.put(DATE, nt.date)
         contentValues.put(TEXT, nt.text)
         val success = db.update(TBL_NOTE, contentValues, "_id=" + nt.id, null)
@@ -100,7 +98,7 @@ class SQLiteHelper(context: Context) :
         val contentValues = ContentValues()
         contentValues.put(ID, id)
 
-        val success = db.delete(TBL_NOTE, "id=$id", null)
+        val success = db.delete(TBL_NOTE, "_id=$id", null)
         db.close()
         return success
     }
