@@ -47,6 +47,39 @@ class SQLiteHelper(context: Context) :
         return success
     }
 
+    @SuppressLint("Range")
+    fun getNote(date: String): ArrayList<NoteModel> {
+        val ntList: ArrayList<NoteModel> = ArrayList()
+        val selectQuery = "SELECT * FROM $TBL_NOTE WHERE $DATE " + "= \"$date\""
+        val db = this.readableDatabase
+
+        val cursor: Cursor?
+
+        try {
+            cursor = db.rawQuery(selectQuery, null)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            db.execSQL(selectQuery)
+            return ArrayList()
+        }
+
+        var id: Int
+        var date: String
+        var text: String
+
+        if (cursor.moveToFirst()) {
+            id = cursor.getInt(cursor.getColumnIndex(ID))
+            date = cursor.getString(cursor.getColumnIndex(DATE))
+            text = cursor.getString(cursor.getColumnIndex(TEXT))
+
+            val nt = NoteModel(id = id, date = date, text = text)
+            ntList.add(nt)
+        }
+
+        return ntList
+
+    }
+
 
     @SuppressLint("Range")
     fun getAllNote(): ArrayList<NoteModel> {
