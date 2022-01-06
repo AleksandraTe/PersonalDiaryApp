@@ -46,12 +46,12 @@
             android:text="All notes"
             android:textSize="20dp"
             android:gravity="left"
-            android:layout_margin="10dp"/>
+            android:layout_margin="15dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

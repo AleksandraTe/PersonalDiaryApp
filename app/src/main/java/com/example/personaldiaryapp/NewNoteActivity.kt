@@ -53,9 +53,13 @@ class NewNoteActivity : AppCompatActivity() {
 
     private fun loadNewNoteView() {
 
+        val date = intent.getStringExtra("ntDate")
         btnUpdate.isVisible = false
         btnSave.setOnClickListener {
             saveNote()
+        }
+        if (!date.isNullOrEmpty()){
+            tvDate.setText(date)
         }
     }
 
@@ -80,8 +84,6 @@ class NewNoteActivity : AppCompatActivity() {
         val id = intent.getIntExtra("ntId", 0)
         val nt = NoteModel(id = id, date = date, text = text)
 
-
-        if(nt == null) return
 
         val status = sqliteHelper.updateNote(nt)
         if (status > -1) {

@@ -10,18 +10,24 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var btnAdd: Button
     private lateinit var sqliteHelper:SQLiteHelper
-    private lateinit var  recyclerView: RecyclerView
+    private lateinit var recyclerView: RecyclerView
     private lateinit var searchView: SearchView
     private lateinit var btnCalendar: Button
 
     private var adapter:NoteAdapter? = null
 
+    override fun onResume() {
+        super.onResume()
+        getNotes()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -32,7 +38,20 @@ class MainActivity : AppCompatActivity() {
         getNotes()
         btnAdd.setOnClickListener { 
             val intent = Intent(this, NewNoteActivity::class.java)
-            intent.putExtra("new", "true")
+
+            val sdf = SimpleDateFormat("dd/M/yyyy")
+            val currentDate = sdf.format(Date())
+
+            if (sqliteHelper.getNote(currentDate).isEmpty()) {
+                intent.putExtra("new", "true")
+            }
+            else {
+                val todayNote = sqliteHelper.getNote(currentDate).get(0)
+                intent.putExtra("new", "false")
+                intent.putExtra("ntId", todayNote.id)
+                intent.putExtra("ntDate", todayNote.date)
+                intent.putExtra("ntText", todayNote.text)
+            }
             startActivity(intent)
 
         }
