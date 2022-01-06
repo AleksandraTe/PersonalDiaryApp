@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PersonalDiaryApp">
         <activity
+            android:name=".CalendarActivity"
+            android:exported="true" />
+        <activity
             android:name=".NewNoteActivity"
             android:exported="true" />
         <activity

@@ -2,6 +2,7 @@ package com.example.personaldiaryapp
 
 import android.content.Context
 import android.content.Intent
+import android.inputmethodservice.Keyboard
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.ContactsContract
@@ -24,9 +25,9 @@ class NewNoteActivity : AppCompatActivity() {
     private lateinit var sqliteHelper:SQLiteHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_note)
-
         initView()
         sqliteHelper = SQLiteHelper(this)
 
@@ -43,16 +44,15 @@ class NewNoteActivity : AppCompatActivity() {
         }
 
         edText.requestFocus()
-
+        
         btnSave.setOnClickListener {
             saveNote()
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
         }
 
     }
 
     private fun loadNewNoteView() {
+
         btnUpdate.isVisible = false
         btnSave.setOnClickListener {
             saveNote()
@@ -93,14 +93,16 @@ class NewNoteActivity : AppCompatActivity() {
 
     private fun saveNote() {
 
-
         val date = tvDate.text.toString()
         val text = edText.text.toString()
-        if(date.isEmpty() || text.isEmpty()) {
+        if(text.isEmpty()) {
             Toast.makeText(this, "Please enter requried field", Toast.LENGTH_SHORT).show()
         } else {
             val nt = NoteModel(id = 0, date = date, text = text)
             val status = sqliteHelper.insertNote(nt)
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+
             //Check insert success or not success
             if (status > -1) {
                 Toast.makeText(this, "Note saved", Toast.LENGTH_SHORT).show()
@@ -110,7 +112,6 @@ class NewNoteActivity : AppCompatActivity() {
                 Toast.makeText(this, "Record not saved", Toast.LENGTH_SHORT).show()
             }
         }
-
     }
 
     private fun clearEditText() {

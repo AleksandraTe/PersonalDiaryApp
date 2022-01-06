@@ -3,21 +3,22 @@ package com.example.personaldiaryapp
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.service.autofill.FillEventHistory
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 
 class MainActivity : AppCompatActivity() {
+
     private lateinit var btnAdd: Button
     private lateinit var sqliteHelper:SQLiteHelper
     private lateinit var  recyclerView: RecyclerView
+    private lateinit var searchView: SearchView
+    private lateinit var btnCalendar: Button
 
     private var adapter:NoteAdapter? = null
 
@@ -33,7 +34,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, NewNoteActivity::class.java)
             intent.putExtra("new", "true")
             startActivity(intent)
-            finish()
+
         }
 
         adapter?.setOnClickItem {
@@ -43,11 +44,17 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("ntDate", it.date)
             intent.putExtra("ntText", it.text)
             startActivity(intent)
-            finish()
+
         }
 
         adapter?.setOnClickDeleteItem {
             deleteNote(it.id)
+        }
+
+        btnCalendar.setOnClickListener {
+            val intent = Intent(this, CalendarActivity::class.java)
+            startActivity(intent)
+
         }
     }
 
@@ -86,5 +93,7 @@ class MainActivity : AppCompatActivity() {
     private fun initView() {
         btnAdd = findViewById(R.id.btnAdd)
         recyclerView = findViewById(R.id.recyclerView)
+        searchView = findViewById(R.id.searchView)
+        btnCalendar = findViewById(R.id.btnCalendar)
     }
 }

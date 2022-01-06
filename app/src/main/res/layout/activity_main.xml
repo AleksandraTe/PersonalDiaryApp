@@ -10,16 +10,43 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:id="@+id/lvFirst"
+        android:weightSum="1">
+
+        <SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:queryHint="Search your notes"
+            android:iconifiedByDefault="false"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/btnCalendar"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="Calendar"
+            android:layout_gravity="bottom"
+            android:layout_marginRight="10dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/lvFirst"
+        tools:ignore="NotSibling">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="All notes"
-            android:textSize="40dp"
-            android:gravity="center"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"/>
+            android:textSize="20dp"
+            android:gravity="left"
+            android:layout_margin="10dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
