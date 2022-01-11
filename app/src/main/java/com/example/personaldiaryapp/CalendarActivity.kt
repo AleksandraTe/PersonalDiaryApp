@@ -1,19 +1,17 @@
 package com.example.personaldiaryapp
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.CalendarView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class CalendarActivity : AppCompatActivity() {
 
@@ -67,6 +65,7 @@ class CalendarActivity : AppCompatActivity() {
             intent.putExtra("ntId", it.id)
             intent.putExtra("ntDate", it.date)
             intent.putExtra("ntText", it.text)
+            intent.putExtra("ntColor", it.color)
             startActivity(intent)
         }
 

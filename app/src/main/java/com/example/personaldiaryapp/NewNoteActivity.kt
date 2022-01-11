@@ -1,18 +1,17 @@
 package com.example.personaldiaryapp
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.inputmethodservice.Keyboard
-import androidx.appcompat.app.AppCompatActivity
+import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.util.Log
-import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import kotlinx.android.synthetic.main.activity_new_note.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,6 +22,8 @@ class NewNoteActivity : AppCompatActivity() {
     private lateinit var tvDate: TextView
     private lateinit var edText: EditText
     private lateinit var sqliteHelper:SQLiteHelper
+    private lateinit var rlNewNote: RelativeLayout
+    private lateinit var selectedColor: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -30,6 +31,12 @@ class NewNoteActivity : AppCompatActivity() {
         setContentView(R.layout.activity_new_note)
         initView()
         sqliteHelper = SQLiteHelper(this)
+
+        selectedColor = intent.getStringExtra("ntColor")!!
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+            BroadcastReceiver, IntentFilter("bottom_sheet_action")
+        )
 
         val isNew = intent.getStringExtra("new")
         val sdf = SimpleDateFormat("dd/M/yyyy")
@@ -47,6 +54,12 @@ class NewNoteActivity : AppCompatActivity() {
         
         btnSave.setOnClickListener {
             saveNote()
+        }
+
+        imgMore.setOnClickListener {
+
+            var noteBottomSheetFragment = NoteBottomSheetFragment.newInstance()
+            noteBottomSheetFragment.show(supportFragmentManager, "Note Bottom Sheet Fragment")
         }
 
     }
@@ -67,6 +80,7 @@ class NewNoteActivity : AppCompatActivity() {
         btnSave.isVisible = false
         val date = intent.getStringExtra("ntDate")
         val text = intent.getStringExtra("ntText")
+        val color = intent.getStringExtra("ntColor")
 
         btnUpdate.setOnClickListener {
             updateNote()
@@ -76,14 +90,16 @@ class NewNoteActivity : AppCompatActivity() {
         }
         tvDate.setText(date)
         edText.setText(text)
+        rlNewNote.setBackgroundColor(Color.parseColor(color))
+
     }
 
     private fun updateNote() {
         val date = tvDate.text.toString()
         val text = edText.text.toString()
+        val color = selectedColor
         val id = intent.getIntExtra("ntId", 0)
-        val nt = NoteModel(id = id, date = date, text = text)
-
+        val nt = NoteModel(id = id, date = date, text = text, color = color)
 
         val status = sqliteHelper.updateNote(nt)
         if (status > -1) {
@@ -97,10 +113,12 @@ class NewNoteActivity : AppCompatActivity() {
 
         val date = tvDate.text.toString()
         val text = edText.text.toString()
+        val color = selectedColor
+
         if(text.isEmpty()) {
             Toast.makeText(this, "Please enter requried field", Toast.LENGTH_SHORT).show()
         } else {
-            val nt = NoteModel(id = 0, date = date, text = text)
+            val nt = NoteModel(id = 0, date = date, text = text, color = color)
             val status = sqliteHelper.insertNote(nt)
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
@@ -116,10 +134,27 @@ class NewNoteActivity : AppCompatActivity() {
         }
     }
 
+    private val BroadcastReceiver : BroadcastReceiver = object : BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+            selectedColor = intent!!.getStringExtra("selectedColor")!!
+            Log.e("ELO", selectedColor!!)
+
+            rlNewNote.setBackgroundColor(Color.parseColor(selectedColor))
+
+        }
+    }
+
+
     private fun clearEditText() {
         tvDate.setText("")
         edText.setText("")
+        rlNewNote.setBackgroundColor(Color.parseColor("#2e2e2e"))
         tvDate.requestFocus()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(BroadcastReceiver)
     }
 
     private fun initView() {
@@ -127,5 +162,6 @@ class NewNoteActivity : AppCompatActivity() {
         edText = findViewById(R.id.edText)
         btnSave = findViewById(R.id.btnSave)
         btnUpdate = findViewById(R.id.btnUpdate)
+        rlNewNote = findViewById(R.id.rlNewNote)
     }
 }

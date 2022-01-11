@@ -6,27 +6,26 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.util.Log
-import java.lang.Exception
 
 class SQLiteHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
 
-        private const val DATABASE_VERSION = 3
+        private const val DATABASE_VERSION = 6
         private const val DATABASE_NAME = "diary.db"
         private const val TBL_NOTE = "tbl_note"
         private const val ID = "_id"
         private const val DATE = "date"
         private const val TEXT = "text"
+        private const val COLOR = "color"
     }
 
 
     override fun onCreate(db: SQLiteDatabase?) {
         val createTblNote = ("CREATE TABLE " + TBL_NOTE + "("
                 + ID + " INTEGER PRIMARY KEY, " + DATE + " TEXT,"
-                + TEXT + " TEXT" + ")")
+                + TEXT + " TEXT," + COLOR + " TEXT" + ")")
         db?.execSQL(createTblNote)
     }
 
@@ -41,6 +40,7 @@ class SQLiteHelper(context: Context) :
         val contentValues = ContentValues()
         contentValues.put(DATE, nt.date)
         contentValues.put(TEXT, nt.text)
+        contentValues.put(COLOR, nt.color)
 
         val success = db.insert(TBL_NOTE, null, contentValues)
         db.close()
@@ -66,13 +66,15 @@ class SQLiteHelper(context: Context) :
         var id: Int
         var date: String
         var text: String
+        var color: String
 
         if (cursor.moveToFirst()) {
             id = cursor.getInt(cursor.getColumnIndex(ID))
             date = cursor.getString(cursor.getColumnIndex(DATE))
             text = cursor.getString(cursor.getColumnIndex(TEXT))
+            color = cursor.getString(cursor.getColumnIndex(COLOR))
 
-            val nt = NoteModel(id = id, date = date, text = text)
+            val nt = NoteModel(id = id, date = date, text = text, color = color)
             ntList.add(nt)
         }
 
@@ -100,14 +102,16 @@ class SQLiteHelper(context: Context) :
         var id: Int
         var date: String
         var text: String
+        var color: String
 
         if (cursor.moveToFirst()) {
             do {
                 id = cursor.getInt(cursor.getColumnIndex(ID))
                 date = cursor.getString(cursor.getColumnIndex(DATE))
                 text = cursor.getString(cursor.getColumnIndex(TEXT))
+                color = cursor.getString(cursor.getColumnIndex(COLOR))
 
-                val nt = NoteModel(id = id, date = date, text = text)
+                val nt = NoteModel(id = id, date = date, text = text, color = color)
                 ntList.add(nt)
             } while (cursor.moveToNext())
         }
@@ -121,6 +125,7 @@ class SQLiteHelper(context: Context) :
         val contentValues = ContentValues()
         contentValues.put(DATE, nt.date)
         contentValues.put(TEXT, nt.text)
+        contentValues.put(COLOR, nt.color)
         val success = db.update(TBL_NOTE, contentValues, "_id=" + nt.id, null)
         db.close()
         return success

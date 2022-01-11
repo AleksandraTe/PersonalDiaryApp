@@ -8,11 +8,11 @@
     android:gravity="center_horizontal">
 
     <LinearLayout
+        android:id="@+id/lvFirst"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_alignParentTop="true"
-        android:id="@+id/lvFirst"
         android:weightSum="1">
 
         <SearchView

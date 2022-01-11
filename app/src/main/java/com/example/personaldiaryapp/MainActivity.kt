@@ -1,13 +1,12 @@
 package com.example.personaldiaryapp
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.ContactsContract
-import android.service.autofill.FillEventHistory
 import android.util.Log
-import android.widget.*
+import android.widget.Button
+import android.widget.SearchView
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
@@ -51,6 +50,7 @@ class MainActivity : AppCompatActivity() {
                 intent.putExtra("ntId", todayNote.id)
                 intent.putExtra("ntDate", todayNote.date)
                 intent.putExtra("ntText", todayNote.text)
+                intent.putExtra("ntColor", todayNote.color)
             }
             startActivity(intent)
 
@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("ntId", it.id)
             intent.putExtra("ntDate", it.date)
             intent.putExtra("ntText", it.text)
+            intent.putExtra("ntColor", it.color)
             startActivity(intent)
 
         }
