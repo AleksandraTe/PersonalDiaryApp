@@ -32,8 +32,6 @@ class NewNoteActivity : AppCompatActivity() {
         initView()
         sqliteHelper = SQLiteHelper(this)
 
-        selectedColor = intent.getStringExtra("ntColor")!!
-
         LocalBroadcastManager.getInstance(this).registerReceiver(
             BroadcastReceiver, IntentFilter("bottom_sheet_action")
         )
@@ -81,6 +79,7 @@ class NewNoteActivity : AppCompatActivity() {
         val date = intent.getStringExtra("ntDate")
         val text = intent.getStringExtra("ntText")
         val color = intent.getStringExtra("ntColor")
+        selectedColor = color!!
 
         btnUpdate.setOnClickListener {
             updateNote()
@@ -113,7 +112,7 @@ class NewNoteActivity : AppCompatActivity() {
 
         val date = tvDate.text.toString()
         val text = edText.text.toString()
-        val color = selectedColor
+        val color = "#2b436e"
 
         if(text.isEmpty()) {
             Toast.makeText(this, "Please enter requried field", Toast.LENGTH_SHORT).show()

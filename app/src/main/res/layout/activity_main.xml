@@ -11,25 +11,24 @@
         android:id="@+id/lvFirst"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_alignParentTop="true"
         android:weightSum="1">
-
-        <SearchView
-            android:id="@+id/searchView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:queryHint="Search your notes"
-            android:iconifiedByDefault="false"
-            android:layout_weight="1"/>
 
         <Button
             android:id="@+id/btnCalendar"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:text="Calendar"
-            android:layout_gravity="bottom"
-            android:layout_marginRight="10dp" />
+            android:layout_gravity="right"
+            android:layout_margin="10dp" />
+
+        <SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:queryHint="Search your notes"
+            android:iconifiedByDefault="false"/>
 
     </LinearLayout>
 
@@ -65,7 +64,7 @@
             android:id="@+id/btnAdd"
             android:layout_width="150dp"
             android:layout_height="50dp"
-            android:text="Add new note"
+            android:text="Open diary"
             android:layout_gravity="bottom"
             android:layout_marginRight="10dp"/>
 
