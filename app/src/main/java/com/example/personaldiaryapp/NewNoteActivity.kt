@@ -5,26 +5,33 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.android.synthetic.main.activity_new_note.*
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 
 class NewNoteActivity : AppCompatActivity() {
     private lateinit var btnSave: Button
     private lateinit var btnUpdate: Button
+    private lateinit var btnPreviousDays: Button
+    private lateinit var btnNextDate: Button
     private lateinit var tvDate: TextView
     private lateinit var edText: EditText
     private lateinit var sqliteHelper:SQLiteHelper
     private lateinit var rlNewNote: RelativeLayout
     private lateinit var selectedColor: String
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -60,11 +67,51 @@ class NewNoteActivity : AppCompatActivity() {
             noteBottomSheetFragment.show(supportFragmentManager, "Note Bottom Sheet Fragment")
         }
 
+        btnNextDate.setOnClickListener() {
+            openAnotherNote(true)
+        }
+
+        btnPreviousDays.setOnClickListener() {
+
+            openAnotherNote(false)
+
+        }
+
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun openAnotherNote(next: Boolean){
+
+        val intent = Intent(this, NewNoteActivity::class.java)
+        val dtf = DateTimeFormatter.ofPattern("dd/M/yyyy")
+        val currentDate = LocalDate.parse(tvDate.text, dtf)
+        val nextDateString: String
+
+        if(next){
+            nextDateString = dtf.format(currentDate.plusDays(1)).toString()
+        } else {
+            nextDateString = dtf.format(currentDate.minusDays(1)).toString()
+        }
+
+        if (sqliteHelper.getNote(nextDateString).isEmpty()) {
+            intent.putExtra("new", "true")
+            intent.putExtra("ntDate", nextDateString)
+        }
+        else {
+            val todayNote = sqliteHelper.getNote(nextDateString).get(0)
+            intent.putExtra("new", "false")
+            intent.putExtra("ntId", todayNote.id)
+            intent.putExtra("ntDate", todayNote.date)
+            intent.putExtra("ntText", todayNote.text)
+            intent.putExtra("ntColor", todayNote.color)
+        }
+        startActivity(intent)
+        finish()
+    }
     private fun loadNewNoteView() {
 
         val date = intent.getStringExtra("ntDate")
+        selectedColor = "#2b436e"
         btnUpdate.isVisible = false
         btnSave.setOnClickListener {
             saveNote()
@@ -112,7 +159,7 @@ class NewNoteActivity : AppCompatActivity() {
 
         val date = tvDate.text.toString()
         val text = edText.text.toString()
-        val color = "#2b436e"
+        var color = selectedColor
 
         if(text.isEmpty()) {
             Toast.makeText(this, "Please enter requried field", Toast.LENGTH_SHORT).show()
@@ -161,6 +208,8 @@ class NewNoteActivity : AppCompatActivity() {
         edText = findViewById(R.id.edText)
         btnSave = findViewById(R.id.btnSave)
         btnUpdate = findViewById(R.id.btnUpdate)
+        btnPreviousDays = findViewById(R.id.btnPreviousDay)
+        btnNextDate = findViewById(R.id.btnNextDay)
         rlNewNote = findViewById(R.id.rlNewNote)
     }
 }

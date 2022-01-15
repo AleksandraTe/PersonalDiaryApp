@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".NewNoteActivity"
-    android:id="@+id/rlNewNote">
+    android:id="@+id/rlNewNote"
+    android:background="#2b436e">
 
     <LinearLayout
         android:id="@+id/lvFirst"
@@ -32,19 +33,47 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/lvSecond"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@id/lvFirst">
+        android:orientation="horizontal"
+        android:layout_below="@id/lvFirst"
+        android:weightSum="4">
+
+        <Button
+            android:id="@+id/btnPreviousDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="L"
+            android:layout_weight="1"/>
 
         <TextView
             android:id="@+id/tvDate"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
             android:textSize="20sp"
-            android:gravity="center_horizontal"
-            android:importantForAutofill="no" />
+            android:gravity="center"
+            android:importantForAutofill="no"
+            android:layout_weight="2"/>
+
+        <Button
+            android:id="@+id/btnNextDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:text="P"
+            android:layout_weight="1"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/lvSecond">
 
         <EditText
             android:id="@+id/edText"

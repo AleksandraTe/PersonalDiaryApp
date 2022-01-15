@@ -20,7 +20,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchView: SearchView
     private lateinit var btnCalendar: Button
-
     private var adapter:NoteAdapter? = null
 
     override fun onResume() {
