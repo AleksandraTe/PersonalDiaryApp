@@ -111,7 +111,7 @@ class NewNoteActivity : AppCompatActivity() {
     private fun loadNewNoteView() {
 
         val date = intent.getStringExtra("ntDate")
-        selectedColor = "#2b436e"
+        selectedColor = "#B3B7C0"
         btnUpdate.isVisible = false
         btnSave.setOnClickListener {
             saveNote()
@@ -172,7 +172,7 @@ class NewNoteActivity : AppCompatActivity() {
             //Check insert success or not success
             if (status > -1) {
                 Toast.makeText(this, "Note saved", Toast.LENGTH_SHORT).show()
-                clearEditText()
+                Companion.clearEditText(this)
                 finish()
             } else {
                 Toast.makeText(this, "Record not saved", Toast.LENGTH_SHORT).show()
@@ -191,13 +191,6 @@ class NewNoteActivity : AppCompatActivity() {
     }
 
 
-    private fun clearEditText() {
-        tvDate.setText("")
-        edText.setText("")
-        rlNewNote.setBackgroundColor(Color.parseColor("#2e2e2e"))
-        tvDate.requestFocus()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(BroadcastReceiver)
@@ -211,5 +204,14 @@ class NewNoteActivity : AppCompatActivity() {
         btnPreviousDays = findViewById(R.id.btnPreviousDay)
         btnNextDate = findViewById(R.id.btnNextDay)
         rlNewNote = findViewById(R.id.rlNewNote)
+    }
+
+    companion object {
+        private fun clearEditText(newNoteActivity: NewNoteActivity) {
+            newNoteActivity.tvDate.setText("")
+            newNoteActivity.edText.setText("")
+            //rlNewNote.setBackgroundColor(Color.parseColor("#B3B7C0"))
+            newNoteActivity.tvDate.requestFocus()
+        }
     }
 }

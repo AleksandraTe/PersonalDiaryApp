@@ -19,7 +19,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="date"
-            android:textSize="20sp"/>
+            android:textColor="@color/dark_text"
+            android:textSize="25sp"/>
 
         </LinearLayout>
 
@@ -31,6 +32,7 @@
             android:padding="0dp"
             android:background="#00000000"
             android:textColor="@color/white"
-            android:text="X" />
+            android:drawableTop="@drawable/ic_trash"
+            android:drawableTint="@color/dark_text"/>
 
 </LinearLayout>

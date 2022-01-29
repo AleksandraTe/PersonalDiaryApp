@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.fragment_notes_bottom_sheet.*
 
 class NoteBottomSheetFragment : BottomSheetDialogFragment() {
 
-    var selectedColor = "#2e2e2e"
+    var selectedColor = "#B3B7C0"
 
     companion object {
         fun newInstance(): NoteBottomSheetFragment{
@@ -92,7 +92,7 @@ class NoteBottomSheetFragment : BottomSheetDialogFragment() {
             imgColor1.setImageResource(R.drawable.ic_checkmark)
             imgColor2.setImageResource(0)
             imgColor3.setImageResource(0)
-            selectedColor = "#2b436e"
+            selectedColor = "#B3B7C0"
 
             Toast.makeText(requireContext(),selectedColor,Toast.LENGTH_SHORT)
             val intent = Intent("bottom_sheet_action")
@@ -104,7 +104,7 @@ class NoteBottomSheetFragment : BottomSheetDialogFragment() {
             imgColor1.setImageResource(0)
             imgColor2.setImageResource(R.drawable.ic_checkmark)
             imgColor3.setImageResource(0)
-            selectedColor = "#215c1f"
+            selectedColor = "#B9CFF6"
 
             val intent = Intent("bottom_sheet_action")
             intent.putExtra("selectedColor", selectedColor)
@@ -115,7 +115,7 @@ class NoteBottomSheetFragment : BottomSheetDialogFragment() {
             imgColor1.setImageResource(0)
             imgColor2.setImageResource(0)
             imgColor3.setImageResource(R.drawable.ic_checkmark)
-            selectedColor = "#781f22"
+            selectedColor = "#EEC8C8"
 
             val intent = Intent("bottom_sheet_action")
             intent.putExtra("selectedColor", selectedColor)

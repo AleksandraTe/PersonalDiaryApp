@@ -8,11 +8,12 @@
         <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/drawable/note_color_1.xml" value="0.36302083333333335" />
         <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/drawable/note_color_2.xml" value="0.36302083333333335" />
         <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/drawable/note_color_3.xml" value="0.36302083333333335" />
+        <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/drawable/rounded_corner_note.xml" value="0.2609375" />
         <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/drawable/rounded_corner_view.xml" value="0.36302083333333335" />
-        <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/layout/activity_calendar.xml" value="0.1" />
-        <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/layout/activity_calendar.xml" value="0.33" />
+        <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/layout/activity_new_note.xml" value="0.22" />
-        <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/layout/card_items_nt.xml" value="0.33" />
+        <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/layout/card_items_nt.xml" value="0.1" />
         <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/layout/date_picker_dialog.xml" value="0.20572916666666666" />
         <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/layout/fragment_notes_bottom_sheet.xml" value="0.346875" />
       </map>

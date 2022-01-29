@@ -6,29 +6,36 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".NewNoteActivity"
-    android:id="@+id/rlNewNote"
-    android:background="#2b436e">
+    android:background="@color/background"
+    android:id="@+id/rlNewNote">
 
     <LinearLayout
         android:id="@+id/lvFirst"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity ="right"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@null"
+        android:gravity="right">
 
         <Button
             android:id="@+id/btnSave"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:text="Save"/>
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:drawableTop="@drawable/ic_checkmark"
+            android:drawableTint="@color/dark_button" />
 
         <Button
             android:id="@+id/btnUpdate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:text="Update"/>
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:drawableTop="@drawable/ic_checkmark"
+            android:drawableTint="@color/dark_button" />
 
     </LinearLayout>
 
@@ -37,33 +44,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_margin="10dp"
         android:layout_below="@id/lvFirst"
         android:weightSum="4">
 
         <Button
             android:id="@+id/btnPreviousDay"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_gravity="right"
-            android:text="L"
+            android:drawableTop="@drawable/ic_cheveron_left"
+            android:drawableTint="@color/dark_button"
             android:layout_weight="1"/>
 
         <TextView
             android:id="@+id/tvDate"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:textSize="20sp"
-            android:gravity="center"
-            android:importantForAutofill="no"
+            android:gravity="center_vertical|center_horizontal"
+            android:textSize="25sp"
+            android:textColor="@color/dark_text"
             android:layout_weight="2"/>
 
         <Button
             android:id="@+id/btnNextDay"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_gravity="left"
-            android:text="P"
+            android:drawableTop="@drawable/ic_cheveron_right"
+            android:drawableTint="@color/dark_button"
             android:layout_weight="1"/>
 
 
@@ -71,20 +81,20 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@id/lvSecond">
+        android:layout_height="match_parent"
+        android:layout_below="@id/lvSecond"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/rounded_corner_view"
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/edText"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:inputType="textMultiLine"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="15dp"
-            android:background="@null"
-            android:hint="Enter text"/>
+            <EditText
+                android:id="@+id/edText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:background="@null"
+                android:hint="Enter text"
+                android:inputType="textMultiLine" />
 
     </LinearLayout>
 
@@ -100,7 +110,7 @@
             android:layout_height="25dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_navigation_more"
-            app:tint="@color/white" />
+            app:tint="@color/dark_button" />
 
     </FrameLayout>
 

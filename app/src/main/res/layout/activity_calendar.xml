@@ -5,26 +5,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/background"
     tools:context=".CalendarActivity">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="CALENDAR"
+        android:textSize="25dp"
+        android:textColor="@color/dark_text"
+        android:gravity="center"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="20dp"/>
 
     <CalendarView
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:layout_marginTop="20dp"/>
+        android:layout_margin="10dp"
+        android:background="@drawable/rounded_corner_view"/>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"/>
 
     <Button
         android:id="@+id/btnAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
         android:text="Add new note"
-        android:layout_gravity="center"/>
-
+        android:backgroundTint="@color/dark_button"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"/>
 
 </LinearLayout>

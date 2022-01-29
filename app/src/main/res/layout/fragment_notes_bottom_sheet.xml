@@ -11,35 +11,6 @@
     tools:context=".NewNoteActivity">
 
     <LinearLayout
-        android:id="@+id/layoutHeader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@drawable/ic_checkmark_outline"
-            app:tint="@color/white" />
-
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@drawable/ic_photo"
-            app:tint="@color/white"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"/>
-
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@drawable/ic_link"
-            app:tint="@color/white" />
-
-    </LinearLayout>
-
-    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
@@ -104,6 +75,30 @@
                 app:tint="@color/white"/>
 
         </FrameLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_photo"
+            app:tint="@color/white"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add image"
+            android:gravity="center_vertical"
+            android:textColor="@color/white"/>
+
     </LinearLayout>
 
 
