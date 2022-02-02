@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     app:behavior_peekHeight="40dp"
-    android:background="@color/ColorDefaultNote"
+    android:background="@color/dark_button"
     app:layout_behavior="@string/bottom_sheet_behavior"
     tools:context=".NewNoteActivity">
 
@@ -14,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <FrameLayout
@@ -78,7 +79,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/layoutHeader"
+        android:id="@+id/layoutAddImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
@@ -89,14 +90,13 @@
             android:layout_height="25dp"
             android:src="@drawable/ic_photo"
             app:tint="@color/white"
-            android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Add image"
-            android:gravity="center_vertical"
+            android:layout_gravity="center_vertical"
             android:textColor="@color/white"/>
 
     </LinearLayout>

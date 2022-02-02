@@ -2,20 +2,20 @@ package com.example.personaldiaryapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.SearchView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.SimpleDateFormat
 import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var btnAdd: Button
+    private lateinit var btnAdd: FloatingActionButton
     private lateinit var sqliteHelper:SQLiteHelper
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchView: SearchView
@@ -98,7 +98,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun getNotes() {
         val ntList = sqliteHelper.getAllNote()
-        Log.e("error", "${ntList.size}")
 
         adapter?.addItems(ntList)
     }

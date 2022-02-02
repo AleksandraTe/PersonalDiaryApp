@@ -9,35 +9,33 @@
     android:background="@color/background"
     android:id="@+id/rlNewNote">
 
-    <LinearLayout
-        android:id="@+id/lvFirst"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:background="@null"
-        android:gravity="right">
+        android:layout_height="match_parent"
+        android:layout_marginStart="15dp"
 
-        <Button
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp"
+        android:gravity="bottom|right">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btnSave"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="bottom"
-            android:drawableTop="@drawable/ic_checkmark"
-            android:drawableTint="@color/dark_button" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/dark_button"
+            android:clickable="true"
+            app:srcCompat="@drawable/ic_checkmark" />
 
-        <Button
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btnUpdate"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="bottom"
-            android:drawableTop="@drawable/ic_checkmark"
-            android:drawableTint="@color/dark_button" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/dark_button"
+            android:clickable="true"
+            app:srcCompat="@drawable/ic_checkmark" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/lvSecond"
@@ -46,7 +44,6 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_margin="10dp"
-        android:layout_below="@id/lvFirst"
         android:weightSum="4">
 
         <Button
@@ -54,9 +51,10 @@
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_gravity="right"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
             android:drawableTop="@drawable/ic_cheveron_left"
-            android:drawableTint="@color/dark_button"
-            android:layout_weight="1"/>
+            android:drawableTint="@color/dark_button" />
 
         <TextView
             android:id="@+id/tvDate"
@@ -72,9 +70,10 @@
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_gravity="left"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
             android:drawableTop="@drawable/ic_cheveron_right"
-            android:drawableTint="@color/dark_button"
-            android:layout_weight="1"/>
+            android:drawableTint="@color/dark_button" />
 
 
     </LinearLayout>
@@ -87,14 +86,21 @@
         android:background="@drawable/rounded_corner_view"
         android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/edText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:background="@null"
-                android:hint="Enter text"
-                android:inputType="textMultiLine" />
+        <ImageView
+            android:id="@+id/imgNote"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_margin="10dp"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/edText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:background="@null"
+            android:hint="Enter text"
+            android:inputType="textMultiLine" />
 
     </LinearLayout>
 

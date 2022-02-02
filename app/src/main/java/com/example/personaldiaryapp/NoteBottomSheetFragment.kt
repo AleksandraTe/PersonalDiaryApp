@@ -97,6 +97,7 @@ class NoteBottomSheetFragment : BottomSheetDialogFragment() {
             Toast.makeText(requireContext(),selectedColor,Toast.LENGTH_SHORT)
             val intent = Intent("bottom_sheet_action")
             intent.putExtra("selectedColor", selectedColor)
+            intent.putExtra("action", "Gray")
             LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
         }
         fNote2.setOnClickListener {
@@ -108,6 +109,7 @@ class NoteBottomSheetFragment : BottomSheetDialogFragment() {
 
             val intent = Intent("bottom_sheet_action")
             intent.putExtra("selectedColor", selectedColor)
+            intent.putExtra("action", "Blue")
             LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
         }
         fNote3.setOnClickListener {
@@ -119,7 +121,15 @@ class NoteBottomSheetFragment : BottomSheetDialogFragment() {
 
             val intent = Intent("bottom_sheet_action")
             intent.putExtra("selectedColor", selectedColor)
+            intent.putExtra("action", "Red")
             LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
         }
+
+        layoutAddImage.setOnClickListener {
+            val intent = Intent("bottom_sheet_action")
+            intent.putExtra("action", "Image")
+            LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
+        }
+
     }
 }

@@ -1,28 +1,38 @@
 package com.example.personaldiaryapp
 
+import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.provider.MediaStore
+import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.drawToBitmap
 import androidx.core.view.isVisible
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_new_note.*
+import pub.devrel.easypermissions.AppSettingsDialog
+import pub.devrel.easypermissions.EasyPermissions
+import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 
 
-class NewNoteActivity : AppCompatActivity() {
-    private lateinit var btnSave: Button
-    private lateinit var btnUpdate: Button
+class NewNoteActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks, EasyPermissions.RationaleCallbacks {
+    private lateinit var btnSave: FloatingActionButton
+    private lateinit var btnUpdate: FloatingActionButton
     private lateinit var btnPreviousDays: Button
     private lateinit var btnNextDate: Button
     private lateinit var tvDate: TextView
@@ -30,6 +40,10 @@ class NewNoteActivity : AppCompatActivity() {
     private lateinit var sqliteHelper:SQLiteHelper
     private lateinit var rlNewNote: RelativeLayout
     private lateinit var selectedColor: String
+    private lateinit var imgNote: ImageView
+    private var READ_STORAGE_PERM = 123
+    private var REQUEST_CODE_IMAGE = 456
+    private var selectedImagePath = ""
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +79,9 @@ class NewNoteActivity : AppCompatActivity() {
 
             var noteBottomSheetFragment = NoteBottomSheetFragment.newInstance()
             noteBottomSheetFragment.show(supportFragmentManager, "Note Bottom Sheet Fragment")
+
         }
+
 
         btnNextDate.setOnClickListener() {
             openAnotherNote(true)
@@ -98,7 +114,7 @@ class NewNoteActivity : AppCompatActivity() {
             intent.putExtra("ntDate", nextDateString)
         }
         else {
-            val todayNote = sqliteHelper.getNote(nextDateString).get(0)
+            val todayNote = sqliteHelper.getNote(nextDateString)[0]
             intent.putExtra("new", "false")
             intent.putExtra("ntId", todayNote.id)
             intent.putExtra("ntDate", todayNote.date)
@@ -108,6 +124,14 @@ class NewNoteActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+
+    fun Bitmap.toByteArray():ByteArray{
+        ByteArrayOutputStream().apply {
+            compress(Bitmap.CompressFormat.JPEG,100,this)
+            return toByteArray()
+        }
+    }
+
     private fun loadNewNoteView() {
 
         val date = intent.getStringExtra("ntDate")
@@ -126,6 +150,8 @@ class NewNoteActivity : AppCompatActivity() {
         val date = intent.getStringExtra("ntDate")
         val text = intent.getStringExtra("ntText")
         val color = intent.getStringExtra("ntColor")
+        val image = sqliteHelper.getNote(date!!)[0].image
+
         selectedColor = color!!
 
         btnUpdate.setOnClickListener {
@@ -136,6 +162,8 @@ class NewNoteActivity : AppCompatActivity() {
         }
         tvDate.setText(date)
         edText.setText(text)
+        imgNote.setImageBitmap(image)
+        imgNote.visibility = View.VISIBLE
         rlNewNote.setBackgroundColor(Color.parseColor(color))
 
     }
@@ -144,8 +172,9 @@ class NewNoteActivity : AppCompatActivity() {
         val date = tvDate.text.toString()
         val text = edText.text.toString()
         val color = selectedColor
+        val image = imgNote.drawToBitmap()
         val id = intent.getIntExtra("ntId", 0)
-        val nt = NoteModel(id = id, date = date, text = text, color = color)
+        val nt = NoteModel(id = id, date = date, text = text, color = color, image = image)
 
         val status = sqliteHelper.updateNote(nt)
         if (status > -1) {
@@ -160,11 +189,12 @@ class NewNoteActivity : AppCompatActivity() {
         val date = tvDate.text.toString()
         val text = edText.text.toString()
         var color = selectedColor
+        val image = imgNote.drawToBitmap()
 
         if(text.isEmpty()) {
             Toast.makeText(this, "Please enter requried field", Toast.LENGTH_SHORT).show()
         } else {
-            val nt = NoteModel(id = 0, date = date, text = text, color = color)
+            val nt = NoteModel(id = 0, date = date, text = text, color = color, image = image)
             val status = sqliteHelper.insertNote(nt)
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
@@ -182,11 +212,32 @@ class NewNoteActivity : AppCompatActivity() {
 
     private val BroadcastReceiver : BroadcastReceiver = object : BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
-            selectedColor = intent!!.getStringExtra("selectedColor")!!
-            Log.e("ELO", selectedColor!!)
 
-            rlNewNote.setBackgroundColor(Color.parseColor(selectedColor))
+            var action = intent!!.getStringExtra("action")
 
+            when (action!!) {
+
+                "Gray" -> {
+                    selectedColor = intent.getStringExtra("selectedColor")!!
+                    rlNewNote.setBackgroundColor(Color.parseColor(selectedColor))
+
+                }
+                "Blue" -> {
+                    selectedColor = intent.getStringExtra("selectedColor")!!
+                    rlNewNote.setBackgroundColor(Color.parseColor(selectedColor))
+
+                }
+                "Red" -> {
+                    selectedColor = intent.getStringExtra("selectedColor")!!
+                    rlNewNote.setBackgroundColor(Color.parseColor(selectedColor))
+
+                }
+                "Image" -> {
+
+                    readStorageTask()
+
+                }
+            }
         }
     }
 
@@ -194,6 +245,110 @@ class NewNoteActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(BroadcastReceiver)
+    }
+
+    companion object {
+        private fun clearEditText(newNoteActivity: NewNoteActivity) {
+            newNoteActivity.tvDate.setText("")
+            newNoteActivity.edText.setText("")
+            //rlNewNote.setBackgroundColor(Color.parseColor("#B3B7C0"))
+            newNoteActivity.tvDate.requestFocus()
+        }
+    }
+
+    private fun hasReadStoragePerm():Boolean{
+        return EasyPermissions.hasPermissions(this,Manifest.permission.READ_EXTERNAL_STORAGE)
+    }
+
+    private fun readStorageTask(){
+        if (hasReadStoragePerm()){
+
+            Toast.makeText(this,"permission granted", Toast.LENGTH_SHORT).show()
+            pickImageFromGallery()
+
+        }else{
+            EasyPermissions.requestPermissions(
+                this,
+                "This app needs access to your storage",
+                READ_STORAGE_PERM,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+        }
+    }
+
+    private fun pickImageFromGallery(){
+        var intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+
+        if (intent.resolveActivity(packageManager) != null){
+            startActivityForResult(intent,REQUEST_CODE_IMAGE)
+
+        }
+    }
+
+    private fun getPathFromUri(contentUri: Uri): String? {
+        var filePath:String? = null
+        var cursor = this.contentResolver.query(contentUri, null, null, null, null)
+        if (cursor == null){
+            filePath = contentUri.path
+        }else{
+            cursor.moveToFirst()
+            var index = cursor.getColumnIndex("_data")
+            filePath = cursor.getString(index)
+            cursor.close()
+        }
+        return filePath
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == REQUEST_CODE_IMAGE && resultCode == RESULT_OK){
+            if ( data!= null){
+                var selectedImageUrl = data.data
+
+                if (selectedImageUrl != null){
+                    try {
+                        var inputStream = this.contentResolver.openInputStream(selectedImageUrl)
+                        var bitmap = BitmapFactory.decodeStream(inputStream)
+                        imgNote.setImageBitmap(bitmap)
+                        imgNote.visibility = View.VISIBLE
+
+                        selectedImagePath = getPathFromUri(selectedImageUrl)!!
+                    }catch (e:Exception){
+                        Toast.makeText(this,e.message,Toast.LENGTH_SHORT).show()
+
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+
+            EasyPermissions.onRequestPermissionsResult(requestCode,permissions,grantResults, this)
+    }
+
+    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)){
+            AppSettingsDialog.Builder(this).build().show()
+        }
+    }
+
+    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
+
+    }
+
+    override fun onRationaleAccepted(requestCode: Int) {
+
+    }
+
+    override fun onRationaleDenied(requestCode: Int) {
+
     }
 
     private fun initView() {
@@ -204,14 +359,7 @@ class NewNoteActivity : AppCompatActivity() {
         btnPreviousDays = findViewById(R.id.btnPreviousDay)
         btnNextDate = findViewById(R.id.btnNextDay)
         rlNewNote = findViewById(R.id.rlNewNote)
-    }
-
-    companion object {
-        private fun clearEditText(newNoteActivity: NewNoteActivity) {
-            newNoteActivity.tvDate.setText("")
-            newNoteActivity.edText.setText("")
-            //rlNewNote.setBackgroundColor(Color.parseColor("#B3B7C0"))
-            newNoteActivity.tvDate.requestFocus()
-        }
+//        layoutAddImage = findViewById(R.id.layoutAddImage)
+        imgNote = findViewById(R.id.imgNote)
     }
 }
