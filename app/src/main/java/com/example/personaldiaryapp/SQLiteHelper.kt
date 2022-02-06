@@ -163,4 +163,43 @@ class SQLiteHelper(context: Context) :
         db.close()
         return success
     }
+
+    @SuppressLint("Range")
+    fun getSearchedNote(newText : String): ArrayList<NoteModel> {
+        val ntList: ArrayList<NoteModel> = ArrayList()
+        val selectQuery = "SELECT * FROM $TBL_NOTE WHERE $TEXT LIKE \"%$newText%\" ORDER BY $DATE DESC"
+        val db = this.readableDatabase
+
+        val cursor: Cursor?
+
+        try {
+            cursor = db.rawQuery(selectQuery, null)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            db.execSQL(selectQuery)
+            return ArrayList()
+        }
+
+        var id: Int
+        var date: String
+        var text: String
+        var color: String
+        var image: Bitmap
+
+        if (cursor.moveToFirst()) {
+            do {
+                id = cursor.getInt(cursor.getColumnIndex(ID))
+                date = cursor.getString(cursor.getColumnIndex(DATE))
+                text = cursor.getString(cursor.getColumnIndex(TEXT))
+                color = cursor.getString(cursor.getColumnIndex(COLOR))
+                image = cursor.getBlob(cursor.getColumnIndex(IMAGE)).toBitmap()
+
+                val nt = NoteModel(id = id, date = date, text = text, color = color, image = image)
+                ntList.add(nt)
+            } while (cursor.moveToNext())
+        }
+
+        return ntList
+
+    }
 }

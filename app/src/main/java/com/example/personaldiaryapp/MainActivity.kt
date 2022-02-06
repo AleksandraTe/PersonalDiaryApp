@@ -63,7 +63,6 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("ntText", it.text)
             intent.putExtra("ntColor", it.color)
             startActivity(intent)
-
         }
 
         adapter?.setOnClickDeleteItem {
@@ -73,8 +72,24 @@ class MainActivity : AppCompatActivity() {
         btnCalendar.setOnClickListener {
             val intent = Intent(this, CalendarActivity::class.java)
             startActivity(intent)
-
         }
+
+        searchView.setOnQueryTextListener( object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                getSearchedNotes(newText!!.lowercase())
+                return true
+            }
+        })
+    }
+
+    private fun getSearchedNotes(newText: String?) {
+        val ntList = sqliteHelper.getSearchedNote(newText!!)
+
+        adapter?.addItems(ntList)
     }
 
     private fun deleteNote(id:Int) {

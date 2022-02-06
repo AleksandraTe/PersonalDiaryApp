@@ -5,17 +5,20 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Color
+import android.content.pm.PackageManager
+import android.graphics.*
+import android.graphics.pdf.PdfDocument
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.drawToBitmap
 import androidx.core.view.isVisible
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -24,6 +27,7 @@ import kotlinx.android.synthetic.main.activity_new_note.*
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.ByteArrayOutputStream
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -31,6 +35,7 @@ import java.util.*
 
 
 class NewNoteActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks, EasyPermissions.RationaleCallbacks {
+    private val STORAGE_CODE: Int = 100;
     private lateinit var btnSave: FloatingActionButton
     private lateinit var btnUpdate: FloatingActionButton
     private lateinit var btnPreviousDays: Button
@@ -42,6 +47,7 @@ class NewNoteActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks
     private lateinit var selectedColor: String
     private lateinit var imgNote: ImageView
     private var READ_STORAGE_PERM = 123
+    private var WRITE_STORAGE_PERM = 789
     private var REQUEST_CODE_IMAGE = 456
     private var selectedImagePath = ""
 
@@ -92,7 +98,6 @@ class NewNoteActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks
             openAnotherNote(false)
 
         }
-
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -237,10 +242,16 @@ class NewNoteActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks
                     readStorageTask()
 
                 }
+
+                "Download" -> {
+
+                    writeStorageTask()
+                    downloadPdf()
+
+                }
             }
         }
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
@@ -251,7 +262,6 @@ class NewNoteActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks
         private fun clearEditText(newNoteActivity: NewNoteActivity) {
             newNoteActivity.tvDate.setText("")
             newNoteActivity.edText.setText("")
-            //rlNewNote.setBackgroundColor(Color.parseColor("#B3B7C0"))
             newNoteActivity.tvDate.requestFocus()
         }
     }
@@ -272,6 +282,26 @@ class NewNoteActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks
                 "This app needs access to your storage",
                 READ_STORAGE_PERM,
                 Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+        }
+    }
+
+    private fun hasWriteStoragePerm():Boolean{
+        return EasyPermissions.hasPermissions(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    }
+
+    private fun writeStorageTask(){
+        if (hasWriteStoragePerm()){
+
+            Toast.makeText(this,"permission granted", Toast.LENGTH_SHORT).show()
+            savePdf()
+
+        }else{
+            EasyPermissions.requestPermissions(
+                this,
+                "This app needs access to your storage",
+                WRITE_STORAGE_PERM,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
             )
         }
     }
@@ -314,22 +344,58 @@ class NewNoteActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks
 
                         selectedImagePath = getPathFromUri(selectedImageUrl)!!
                     }catch (e:Exception){
-                        Toast.makeText(this,e.message,Toast.LENGTH_SHORT).show()
-
+                        Log.e("eee347", e.message!!)
                     }
                 }
             }
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    private fun viewToBitmap():Bitmap{
+
+        val imgBitmap = imgNote.drawable.toBitmap()
+        val textBitmap = edText.drawToBitmap()
+
+        val bmOverlay = Bitmap.createBitmap(imgBitmap.width, imgBitmap.height, imgBitmap.config)
+
+        val canvas = Canvas(bmOverlay)
+        canvas.drawBitmap(imgBitmap, Matrix(), null)
+        canvas.drawBitmap(textBitmap, 0F , imgNote.height.toFloat(), null)
+
+        return bmOverlay
+
+    }
+
+    private fun downloadPdf(){
+
+        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            == PackageManager.PERMISSION_DENIED
+        ) {
+            val permissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            requestPermissions(permissions, STORAGE_CODE)
+        } else {
+            savePdf()
+        }
+    }
+
+    private fun savePdf() {
+        val mFileName = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(System.currentTimeMillis())
+        val mFilePath = Environment.getExternalStorageDirectory().toString() + "/" + mFileName + ".pdf"
+
+        val pdfDocument = PdfDocument()
+        val pageInfo = PdfDocument.PageInfo.Builder(imgNote.width, 2010,1).create()
+        val page = pdfDocument.startPage(pageInfo)
+        val canvas = page.canvas
+
+        canvas.drawBitmap(viewToBitmap(), 0F, 0F, null)
+        pdfDocument.finishPage(page)
+        pdfDocument.writeTo(FileOutputStream(mFilePath))
+        pdfDocument.close()
+
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-
             EasyPermissions.onRequestPermissionsResult(requestCode,permissions,grantResults, this)
     }
 
@@ -339,17 +405,10 @@ class NewNoteActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks
         }
     }
 
-    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
+    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {}
+    override fun onRationaleAccepted(requestCode: Int) {}
+    override fun onRationaleDenied(requestCode: Int) {}
 
-    }
-
-    override fun onRationaleAccepted(requestCode: Int) {
-
-    }
-
-    override fun onRationaleDenied(requestCode: Int) {
-
-    }
 
     private fun initView() {
         tvDate = findViewById(R.id.tvDate)
@@ -359,7 +418,6 @@ class NewNoteActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks
         btnPreviousDays = findViewById(R.id.btnPreviousDay)
         btnNextDate = findViewById(R.id.btnNextDay)
         rlNewNote = findViewById(R.id.rlNewNote)
-//        layoutAddImage = findViewById(R.id.layoutAddImage)
         imgNote = findViewById(R.id.imgNote)
     }
 }
