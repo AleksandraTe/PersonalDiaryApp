@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.PersonalDiaryApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/background</item>
+        <item name="colorPrimary">@color/dark_button</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/background</item>
         <!-- Secondary brand color. -->

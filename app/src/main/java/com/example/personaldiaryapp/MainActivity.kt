@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchView: SearchView
     private lateinit var btnCalendar: Button
+    private lateinit var btnPrint: Button
     private var adapter:NoteAdapter? = null
 
     override fun onResume() {
@@ -71,6 +72,11 @@ class MainActivity : AppCompatActivity() {
 
         btnCalendar.setOnClickListener {
             val intent = Intent(this, CalendarActivity::class.java)
+            startActivity(intent)
+        }
+
+        btnPrint.setOnClickListener {
+            val intent = Intent(this, DownloadNoteActivity::class.java)
             startActivity(intent)
         }
 
@@ -128,5 +134,6 @@ class MainActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerView)
         searchView = findViewById(R.id.searchView)
         btnCalendar = findViewById(R.id.btnCalendar)
+        btnPrint = findViewById(R.id.btnPrint)
     }
 }

@@ -24,7 +24,6 @@ import androidx.core.view.isVisible
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_new_note.*
-import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.ByteArrayOutputStream
 import java.io.FileOutputStream
@@ -34,7 +33,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 
-class NewNoteActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks, EasyPermissions.RationaleCallbacks {
+class NewNoteActivity : AppCompatActivity() {
     private val STORAGE_CODE: Int = 100;
     private lateinit var btnSave: FloatingActionButton
     private lateinit var btnUpdate: FloatingActionButton
@@ -47,7 +46,6 @@ class NewNoteActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks
     private lateinit var selectedColor: String
     private lateinit var imgNote: ImageView
     private var READ_STORAGE_PERM = 123
-    private var WRITE_STORAGE_PERM = 789
     private var REQUEST_CODE_IMAGE = 456
     private var selectedImagePath = ""
 
@@ -245,7 +243,6 @@ class NewNoteActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks
 
                 "Download" -> {
 
-                    writeStorageTask()
                     downloadPdf()
 
                 }
@@ -282,26 +279,6 @@ class NewNoteActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks
                 "This app needs access to your storage",
                 READ_STORAGE_PERM,
                 Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-        }
-    }
-
-    private fun hasWriteStoragePerm():Boolean{
-        return EasyPermissions.hasPermissions(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    }
-
-    private fun writeStorageTask(){
-        if (hasWriteStoragePerm()){
-
-            Toast.makeText(this,"permission granted", Toast.LENGTH_SHORT).show()
-            savePdf()
-
-        }else{
-            EasyPermissions.requestPermissions(
-                this,
-                "This app needs access to your storage",
-                WRITE_STORAGE_PERM,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
             )
         }
     }
@@ -353,6 +330,7 @@ class NewNoteActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks
 
     private fun viewToBitmap():Bitmap{
 
+        val dateBitmap = tvDate.drawToBitmap()
         val imgBitmap = imgNote.drawable.toBitmap()
         val textBitmap = edText.drawToBitmap()
 
@@ -361,6 +339,7 @@ class NewNoteActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks
         val canvas = Canvas(bmOverlay)
         canvas.drawBitmap(imgBitmap, Matrix(), null)
         canvas.drawBitmap(textBitmap, 0F , imgNote.height.toFloat(), null)
+        canvas.drawBitmap(dateBitmap, 50F, 50F, null)
 
         return bmOverlay
 
@@ -393,22 +372,6 @@ class NewNoteActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks
         pdfDocument.close()
 
     }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-            EasyPermissions.onRequestPermissionsResult(requestCode,permissions,grantResults, this)
-    }
-
-    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
-        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)){
-            AppSettingsDialog.Builder(this).build().show()
-        }
-    }
-
-    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {}
-    override fun onRationaleAccepted(requestCode: Int) {}
-    override fun onRationaleDenied(requestCode: Int) {}
-
 
     private fun initView() {
         tvDate = findViewById(R.id.tvDate)

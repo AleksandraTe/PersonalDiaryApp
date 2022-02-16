@@ -102,29 +102,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/layoutAddCheckbox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@drawable/ic_checkmark_outline"
-            app:tint="@color/white"
-            android:layout_marginEnd="10dp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Add checkbox"
-            android:layout_gravity="center_vertical"
-            android:textColor="@color/white"/>
-
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/layoutDownload"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

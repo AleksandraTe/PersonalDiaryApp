@@ -4,18 +4,23 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.36302083333333335" />
+        <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/drawable-v24/rounded_corner_button.xml" value="0.246875" />
         <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/drawable-v24/searchview.xml" value="0.2890625" />
+        <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/drawable/ic_backgroundpdf.xml" value="0.2546875" />
         <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/drawable/ic_launcher_background.xml" value="0.36302083333333335" />
+        <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/drawable/ic_todolist.xml" value="0.2552083333333333" />
         <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/drawable/note_color_1.xml" value="0.36302083333333335" />
         <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/drawable/note_color_2.xml" value="0.36302083333333335" />
         <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/drawable/note_color_3.xml" value="0.36302083333333335" />
         <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/drawable/rounded_corner_note.xml" value="0.2609375" />
         <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/drawable/rounded_corner_view.xml" value="0.36302083333333335" />
         <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/layout/activity_calendar.xml" value="0.33" />
-        <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/layout/activity_download_note.xml" value="0.23385416666666667" />
+        <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/layout/activity_new_note.xml" value="0.22" />
         <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/layout/card_items_nt.xml" value="0.1" />
         <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/layout/date_picker_dialog.xml" value="0.20572916666666666" />
+        <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/layout/empty_note_dialog.xml" value="0.31197916666666664" />
         <entry key="..\:/Users/olate/AndroidStudioProjects/PersonalDiaryApp/app/src/main/res/layout/fragment_notes_bottom_sheet.xml" value="0.33" />
       </map>
     </option>

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="bottom"
-    android:background="#00FFFFFF"
-    android:fillViewport="true">
+    android:background="#00FFFFFF">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -16,22 +15,22 @@
         android:orientation="vertical"
         tools:context=".MainActivity">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btnAdd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/dark_button"
-            android:clickable="true"
-            app:backgroundTint="#00FFFFFF"
-            app:srcCompat="@drawable/ic_edit_pencil" />
-
         <LinearLayout
             android:id="@+id/lvFirst"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:orientation="vertical"
+            android:gravity="right"
+            android:orientation="horizontal"
             android:weightSum="1">
+
+            <Button
+                android:id="@+id/btnPrint"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:drawableTop="@drawable/ic_printer"
+                android:drawableTint="@color/dark_button"
+                android:background="#00FFFFFF" />
 
             <Button
                 android:id="@+id/btnCalendar"
@@ -39,8 +38,17 @@
                 android:layout_height="60dp"
                 android:layout_gravity="right"
                 android:drawableTop="@drawable/ic_calendar"
-                android:drawableTint="#50545B"
-                android:shadowColor="#00FFFFFF" />
+                android:drawableTint="@color/dark_button"
+                android:background="#00FFFFFF" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lvFirst"
+            android:orientation="vertical"
+            tools:ignore="NotSibling">
 
             <SearchView
                 android:id="@+id/searchView"
@@ -52,15 +60,6 @@
                 app:showAsAction="always|collapseActionView"
                 android:queryBackground="@android:color/transparent"
                 android:queryHint="Search your notes" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/lvFirst"
-            android:orientation="vertical"
-            tools:ignore="NotSibling">
 
             <TextView
                 android:layout_width="match_parent"
@@ -74,9 +73,26 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="bottom|right">
 
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/dark_button"
+                android:clickable="true"
+                app:backgroundTint="#00FFFFFF"
+                app:srcCompat="@drawable/ic_edit_pencil" />
         </LinearLayout>
     </RelativeLayout>
-</ScrollView>
+</RelativeLayout>

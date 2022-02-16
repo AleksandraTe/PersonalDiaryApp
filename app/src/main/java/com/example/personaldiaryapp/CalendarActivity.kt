@@ -1,6 +1,8 @@
 package com.example.personaldiaryapp
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -21,8 +23,10 @@ class CalendarActivity : AppCompatActivity() {
     private lateinit var btnAdd: Button
     private lateinit var selectedDate: String
 
+
     private var adapter:NoteAdapter? = null
 
+    @SuppressLint("SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar)
@@ -33,25 +37,17 @@ class CalendarActivity : AppCompatActivity() {
         initView()
         initRecyclerView()
         sqliteHelper = SQLiteHelper(this)
-        btnAdd.isVisible = when (getOneNote(currentDate).isEmpty()) {
-            true -> true
-            false -> false
-        }
-        calendarView.setOnDateChangeListener { calendarView, i, i2, i3 ->
+
+        calendarView.setOnDateChangeListener { _, i, i2, i3 ->
             val mon = i2 + 1
-            val day: String
-            if(i3 < 10){
-                day = "0$i3"
-            } else {
-                day = i3.toString()
-            }
+
+            val day = if(i3 < 10) "0$i3" else i3.toString()
+
             selectedDate = "$day/$mon/$i"
 
-            btnAdd.isVisible = when (getOneNote("$day/$mon/$i").isEmpty()) {
-                true -> true
-                false -> false
-            }
+            btnAdd.isVisible = getOneNote(selectedDate).isEmpty()
         }
+
         btnAdd.setOnClickListener {
             val intent = Intent(this, NewNoteActivity::class.java)
             intent.putExtra("new", "true")
@@ -110,9 +106,11 @@ class CalendarActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun initView() {
         calendarView = findViewById(R.id.calendarView)
         recyclerView = findViewById(R.id.recyclerView)
         btnAdd = findViewById(R.id.btnAdd)
+
     }
 }

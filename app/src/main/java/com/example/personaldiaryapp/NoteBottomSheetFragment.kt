@@ -64,7 +64,6 @@ class NoteBottomSheetFragment : BottomSheetDialogFragment() {
                 }
 
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                    TODO("Not yet implemented")
 
                 }
 
@@ -128,12 +127,6 @@ class NoteBottomSheetFragment : BottomSheetDialogFragment() {
         layoutAddImage.setOnClickListener {
             val intent = Intent("bottom_sheet_action")
             intent.putExtra("action", "Image")
-            LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
-        }
-
-        layoutAddCheckbox.setOnClickListener {
-            val intent = Intent("bottom_sheet_action")
-            intent.putExtra("action", "Checkbox")
             LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
         }
 
