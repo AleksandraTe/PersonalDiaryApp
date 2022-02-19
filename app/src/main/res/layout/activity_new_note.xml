@@ -9,6 +9,8 @@
     android:background="@color/background"
     android:id="@+id/rlNewNote">
 
+
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -37,6 +39,13 @@
 
 
     </RelativeLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
     <LinearLayout
         android:id="@+id/lvSecond"
@@ -109,7 +118,9 @@
             android:inputType="textMultiLine" />
 
     </LinearLayout>
+    </RelativeLayout>
 
+    </ScrollView>
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
