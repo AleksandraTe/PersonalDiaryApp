@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import java.io.ByteArrayOutputStream
+import java.util.*
+import kotlin.collections.ArrayList
 
 class SQLiteHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -27,6 +29,7 @@ class SQLiteHelper(context: Context) :
         private const val VALUE = "value"
         private const val NOTE_ID = "note_id"
     }
+
 
     override fun onCreate(db: SQLiteDatabase?) {
         val createTblNote = ("CREATE TABLE " + TBL_NOTE + "("
@@ -78,9 +81,9 @@ class SQLiteHelper(context: Context) :
     }
 
     @SuppressLint("Range")
-    fun getNote(date: String): ArrayList<NoteModel> {
+    fun getNote(date: Long): ArrayList<NoteModel> {
         val ntList: ArrayList<NoteModel> = ArrayList()
-        val selectQuery = "SELECT * FROM $TBL_NOTE WHERE $DATE " + "= \"$date\""
+        val selectQuery = "SELECT * FROM $TBL_NOTE WHERE $DATE = $date"
         val db = this.readableDatabase
 
         val cursor: Cursor?
@@ -94,7 +97,7 @@ class SQLiteHelper(context: Context) :
         }
 
         var id: Int
-        var date: String
+        var date: Long
         var text: String
         var color: String
         var image: Bitmap
@@ -102,7 +105,7 @@ class SQLiteHelper(context: Context) :
 
         if (cursor.moveToFirst()) {
             id = cursor.getInt(cursor.getColumnIndex(ID))
-            date = cursor.getString(cursor.getColumnIndex(DATE))
+            date = cursor.getLong(cursor.getColumnIndex(DATE))
             text = cursor.getString(cursor.getColumnIndex(TEXT))
             color = cursor.getString(cursor.getColumnIndex(COLOR))
             image = cursor.getBlob(cursor.getColumnIndex(IMAGE)).toBitmap()
@@ -133,7 +136,7 @@ class SQLiteHelper(context: Context) :
         }
 
         var id: Int
-        var date: String
+        var date: Long
         var text: String
         var color: String
         var image: Bitmap
@@ -141,7 +144,7 @@ class SQLiteHelper(context: Context) :
         if (cursor.moveToFirst()) {
             do {
                 id = cursor.getInt(cursor.getColumnIndex(ID))
-                date = cursor.getString(cursor.getColumnIndex(DATE))
+                date = cursor.getLong(cursor.getColumnIndex(DATE))
                 text = cursor.getString(cursor.getColumnIndex(TEXT))
                 color = cursor.getString(cursor.getColumnIndex(COLOR))
                 image = cursor.getBlob(cursor.getColumnIndex(IMAGE)).toBitmap()
@@ -175,9 +178,6 @@ class SQLiteHelper(context: Context) :
 
         val success = db.delete(TBL_NOTE, "_id=$id", null)
         db.close()
-
-        deleteNotesCheckboxes(id)
-
         return success
     }
 
@@ -198,7 +198,7 @@ class SQLiteHelper(context: Context) :
         }
 
         var id: Int
-        var date: String
+        var date: Long
         var text: String
         var color: String
         var image: Bitmap
@@ -206,7 +206,7 @@ class SQLiteHelper(context: Context) :
         if (cursor.moveToFirst()) {
             do {
                 id = cursor.getInt(cursor.getColumnIndex(ID))
-                date = cursor.getString(cursor.getColumnIndex(DATE))
+                date = cursor.getLong(cursor.getColumnIndex(DATE))
                 text = cursor.getString(cursor.getColumnIndex(TEXT))
                 color = cursor.getString(cursor.getColumnIndex(COLOR))
                 image = cursor.getBlob(cursor.getColumnIndex(IMAGE)).toBitmap()
@@ -219,97 +219,4 @@ class SQLiteHelper(context: Context) :
         return ntList
 
     }
-
-    fun insertCheckbox(cb: CheckboxModel): Long {
-        val db = this.writableDatabase
-
-        val contentValues = ContentValues()
-        contentValues.put(VALUE, cb.value)
-        contentValues.put(TEXT, cb.text)
-        contentValues.put(NOTE_ID, cb.note_id)
-
-        val success = db.insert(TBL_CHECKBOX, null, contentValues)
-        db.close()
-        return success
-    }
-
-    @SuppressLint("Range")
-    fun getAllCheckbox(note_id: Int): ArrayList<CheckboxModel> {
-
-        val cbList: ArrayList<CheckboxModel> = ArrayList()
-        val selectQuery = "SELECT * FROM $TBL_CHECKBOX WHERE $NOTE_ID = $note_id"
-        val db = this.readableDatabase
-
-        val cursor: Cursor?
-
-        try {
-            cursor = db.rawQuery(selectQuery, null)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            db.execSQL(selectQuery)
-            return ArrayList()
-        }
-
-        var id: Int
-        var note_id: Int
-        var value: Int
-        var text: String
-
-        if (cursor.moveToFirst()) {
-            do {
-                id = cursor.getInt(cursor.getColumnIndex(ID))
-                note_id = cursor.getInt(cursor.getColumnIndex(NOTE_ID))
-                text = cursor.getString(cursor.getColumnIndex(TEXT))
-                value = cursor.getInt(cursor.getColumnIndex(VALUE))
-
-                val cb = CheckboxModel(id = id, note_id = note_id, text = text, value = value == 1)
-                cbList.add(cb)
-            } while (cursor.moveToNext())
-        }
-
-        return cbList
-    }
-
-    fun setCheckboxesNoteId(id: Int): Int {
-        val db = this.writableDatabase
-
-        val contentValues = ContentValues()
-        contentValues.put(NOTE_ID, id)
-        val success = db.update(TBL_CHECKBOX, contentValues, "$NOTE_ID = 0", null)
-        db.close()
-        return success
-    }
-
-    fun updateCheckbox(cb: CheckboxModel): Int {
-        val db = this.writableDatabase
-
-        val contentValues = ContentValues()
-        contentValues.put(VALUE, cb.value)
-        contentValues.put(TEXT, cb.text)
-        val success = db.update(TBL_CHECKBOX, contentValues, "$ID = ${cb.id}", null)
-        db.close()
-        return success
-
-    }
-
-    fun deleteCheckbox(id: Int): Int {
-        val db = this.writableDatabase
-        val contentValues = ContentValues()
-        contentValues.put(ID, id)
-
-        val success = db.delete(TBL_CHECKBOX, "_id=$id", null)
-        db.close()
-        return success
-    }
-
-    fun deleteNotesCheckboxes(id: Int): Int {
-        val db = this.writableDatabase
-        val contentValues = ContentValues()
-        contentValues.put(ID, id)
-
-        val success = db.delete(TBL_CHECKBOX, "$NOTE_ID=$id", null)
-        db.close()
-        return success
-    }
-
 }

@@ -28,7 +28,6 @@
                 android:id="@+id/btnPrint"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:drawableTop="@drawable/ic_printer"
                 android:drawableTint="@color/dark_button"
                 android:background="#00FFFFFF" />
 
