@@ -34,7 +34,6 @@ class CalendarActivity : AppCompatActivity() {
         val currentDate = sdf.format(Date())
         selectedDate = currentDate
 
-        val test = "test"
         initView()
         initRecyclerView()
         sqliteHelper = SQLiteHelper(this)
