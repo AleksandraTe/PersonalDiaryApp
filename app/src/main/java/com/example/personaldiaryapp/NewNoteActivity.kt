@@ -64,6 +64,7 @@ class NewNoteActivity : AppCompatActivity() {
         initView()
         initRecyclerView()
         sqliteHelper = SQLiteHelper(this)
+        sqliteHelper.deleteNotesCheckboxes(0)
         getCheckboxes()
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
@@ -141,16 +142,19 @@ class NewNoteActivity : AppCompatActivity() {
         } else {
             nextDateString = dtf.format(currentDate.minusDays(1)).toString()
         }
-
-        if (sqliteHelper.getNote(nextDateString).isEmpty()) {
+        val dateSplit = nextDateString.split('/')
+        val calendar = Calendar.getInstance()
+        calendar.set(dateSplit[2].toInt(), dateSplit[1].toInt() - 1, dateSplit[0].toInt(), 0, 0, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        if (sqliteHelper.getNote(calendar.timeInMillis).isEmpty()) {
             intent.putExtra("new", "true")
             intent.putExtra("ntDate", nextDateString)
         }
         else {
-            val todayNote = sqliteHelper.getNote(nextDateString)[0]
+            val todayNote = sqliteHelper.getNote(calendar.timeInMillis)[0]
             intent.putExtra("new", "false")
             intent.putExtra("ntId", todayNote.id)
-            intent.putExtra("ntDate", todayNote.date)
+            intent.putExtra("ntDate", nextDateString)
             intent.putExtra("ntText", todayNote.text)
             intent.putExtra("ntColor", todayNote.color)
         }
@@ -183,7 +187,13 @@ class NewNoteActivity : AppCompatActivity() {
         val date = intent.getStringExtra("ntDate")
         val text = intent.getStringExtra("ntText")
         val color = intent.getStringExtra("ntColor")
-        val image = sqliteHelper.getNote(date!!)[0].image
+        val dateSplit = date!!.split('/')
+        val calendar = Calendar.getInstance()
+        calendar.set(dateSplit[2].toInt(), dateSplit[1].toInt() - 1, dateSplit[0].toInt(), 0, 0, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        Log.e("EEEE", (calendar.timeInMillis).toString())
+        Log.e("EEEE", date)
+        val image = sqliteHelper.getNote(calendar.timeInMillis)[0].image
 
         selectedColor = color!!
 
@@ -193,7 +203,7 @@ class NewNoteActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-        tvDate.setText(date)
+        tvDate.text = date
         edText.setText(text)
         imgNote.setImageBitmap(image)
         imgNote.visibility = View.VISIBLE
@@ -207,12 +217,16 @@ class NewNoteActivity : AppCompatActivity() {
         val color = selectedColor
         val image = imgNote.drawToBitmap()
         val id = intent.getIntExtra("ntId", 0)
-        val nt = NoteModel(id = id, date = date, text = text, color = color, image = image)
+
+        val dateSplit = date.split('/')
+        val calendar = Calendar.getInstance()
+        calendar.set(dateSplit[2].toInt(), dateSplit[1].toInt() - 1, dateSplit[0].toInt(), 0, 0, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        val nt = NoteModel(id = id, date = calendar.timeInMillis, text = text, color = color, image = image)
 
         val status = sqliteHelper.updateNote(nt)
 
-        saveCheckboxesNoteId(sqliteHelper.getNote(date)[0].id)
-
+        saveCheckboxesNoteId(sqliteHelper.getNote(calendar.timeInMillis)[0].id)
         val checkboxes = adapter!!.getAllCheckboxes()
         Log.e("EEEE", checkboxes.toString())
         var i = 0
@@ -220,8 +234,11 @@ class NewNoteActivity : AppCompatActivity() {
             val item = recyclerView.getChildAt(i)
             cb.text = item.findViewById<EditText>(R.id.edCheckbox).text.toString()
             cb.value = item.findViewById<CheckBox>(R.id.cbValue).isChecked
+            Log.e("EEEE", cb.toString())
             sqliteHelper.updateCheckbox(cb)
+            i++
         }
+
         if (status > -1) {
             Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
         } else {
@@ -239,10 +256,27 @@ class NewNoteActivity : AppCompatActivity() {
         if(text.isEmpty()) {
             Toast.makeText(this, "Please enter requried field", Toast.LENGTH_SHORT).show()
         } else {
-            val nt = NoteModel(id = 0, date = date, text = text, color = color, image = image)
+            val dateSplit = date.split('/')
+            Log.e("EEEE", dateSplit.toString())
+            val calendar = Calendar.getInstance()
+            calendar.set(dateSplit[2].toInt(), dateSplit[1].toInt() - 1, dateSplit[0].toInt(), 0, 0, 0)
+            calendar.set(Calendar.MILLISECOND, 0)
+            val nt = NoteModel(id = 0, date = calendar.timeInMillis, text = text, color = color, image = image)
             val status = sqliteHelper.insertNote(nt)
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
+
+            saveCheckboxesNoteId(sqliteHelper.getNote(calendar.timeInMillis)[0].id)
+            val checkboxes = adapter!!.getAllCheckboxes()
+            Log.e("EEEE", checkboxes.toString())
+            var i = 0
+            for(cb in checkboxes){
+                val item = recyclerView.getChildAt(i)
+                cb.text = item.findViewById<EditText>(R.id.edCheckbox).text.toString()
+                cb.value = item.findViewById<CheckBox>(R.id.cbValue).isChecked
+                sqliteHelper.updateCheckbox(cb)
+                i++
+            }
 
             //Check insert success or not success
             if (status > -1) {

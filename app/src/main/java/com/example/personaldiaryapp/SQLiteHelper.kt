@@ -15,7 +15,7 @@ class SQLiteHelper(context: Context) :
 
     companion object {
 
-        private const val DATABASE_VERSION = 19
+        private const val DATABASE_VERSION = 23
         private const val DATABASE_NAME = "diary.db"
         private const val TBL_NOTE = "tbl_note"
         private const val TBL_CHECKBOX = "tbl_checkbox"
