@@ -1,6 +1,7 @@
 package com.example.personaldiaryapp
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -17,11 +18,14 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.drawToBitmap
 import androidx.core.view.isVisible
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_new_note.*
 import pub.devrel.easypermissions.EasyPermissions
@@ -37,6 +41,7 @@ class NewNoteActivity : AppCompatActivity() {
     private val STORAGE_CODE: Int = 100;
     private lateinit var btnSave: FloatingActionButton
     private lateinit var btnUpdate: FloatingActionButton
+    private lateinit var recyclerView: RecyclerView
     private lateinit var btnPreviousDays: Button
     private lateinit var btnNextDate: Button
     private lateinit var tvDate: TextView
@@ -45,17 +50,21 @@ class NewNoteActivity : AppCompatActivity() {
     private lateinit var rlNewNote: RelativeLayout
     private lateinit var selectedColor: String
     private lateinit var imgNote: ImageView
+    private var adapter:CheckboxAdapter? = null
     private var READ_STORAGE_PERM = 123
     private var REQUEST_CODE_IMAGE = 456
     private var selectedImagePath = ""
 
+    @SuppressLint("SimpleDateFormat")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_note)
         initView()
+        initRecyclerView()
         sqliteHelper = SQLiteHelper(this)
+        getCheckboxes()
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
             BroadcastReceiver, IntentFilter("bottom_sheet_action")
@@ -64,7 +73,7 @@ class NewNoteActivity : AppCompatActivity() {
         val isNew = intent.getStringExtra("new")
         val sdf = SimpleDateFormat("dd/M/yyyy")
         val currentDate = sdf.format(Date())
-        tvDate.setText(currentDate)
+        tvDate.text = currentDate
 
         if(isNew == "true"){
             loadNewNoteView()
@@ -96,6 +105,27 @@ class NewNoteActivity : AppCompatActivity() {
             openAnotherNote(false)
 
         }
+
+        adapter?.setOnClickDeleteItem {
+            deleteChechbox(it.id)
+        }
+    }
+
+    private fun deleteChechbox(id: Int) {
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage("Are you sure you want to delete note?")
+        builder.setCancelable(true)
+        builder.setPositiveButton("Yes") { dialog, _ ->
+            sqliteHelper.deleteCheckbox(id)
+            getCheckboxes()
+            dialog.dismiss()
+        }
+        builder.setNegativeButton("No") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val alert = builder.create()
+        alert.show()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -180,6 +210,18 @@ class NewNoteActivity : AppCompatActivity() {
         val nt = NoteModel(id = id, date = date, text = text, color = color, image = image)
 
         val status = sqliteHelper.updateNote(nt)
+
+        saveCheckboxesNoteId(sqliteHelper.getNote(date)[0].id)
+        val checkboxes = adapter!!.getAllCheckboxes()
+        Log.e("EEEE", checkboxes.toString())
+        var i = 0
+        for(cb in checkboxes){
+            val item = recyclerView.getChildAt(i)
+            cb.text = item.findViewById<EditText>(R.id.edCheckbox).text.toString()
+            cb.value = item.findViewById<CheckBox>(R.id.cbValue).isChecked
+            sqliteHelper.updateCheckbox(cb)
+        }
+
         if (status > -1) {
             Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
         } else {
@@ -188,7 +230,7 @@ class NewNoteActivity : AppCompatActivity() {
     }
 
     private fun saveNote() {
-
+        Log.e("EEEE", "START")
         val date = tvDate.text.toString()
         val text = edText.text.toString()
         var color = selectedColor
@@ -210,8 +252,14 @@ class NewNoteActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Record not saved", Toast.LENGTH_SHORT).show()
             }
+
         }
     }
+
+    private fun saveCheckboxesNoteId(id: Int) {
+        sqliteHelper.setCheckboxesNoteId(id)
+    }
+
 
     private val BroadcastReceiver : BroadcastReceiver = object : BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -240,7 +288,11 @@ class NewNoteActivity : AppCompatActivity() {
                     readStorageTask()
 
                 }
+                "Checkbox" -> {
 
+                    addCheckbox()
+
+                }
                 "Download" -> {
 
                     downloadPdf()
@@ -373,6 +425,24 @@ class NewNoteActivity : AppCompatActivity() {
 
     }
 
+    private fun addCheckbox() {
+        val emptyCheckbox = CheckboxModel(0, intent.getIntExtra("ntId", 0), false, "")
+        sqliteHelper.insertCheckbox(emptyCheckbox)
+        getCheckboxes()
+    }
+
+    private fun initRecyclerView() {
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        adapter = CheckboxAdapter()
+        recyclerView.adapter = adapter
+    }
+
+    private fun getCheckboxes() {
+        val cbList = sqliteHelper.getAllCheckbox(intent.getIntExtra("ntId", 0))
+
+        adapter?.addItems(cbList)
+    }
+
     private fun initView() {
         tvDate = findViewById(R.id.tvDate)
         edText = findViewById(R.id.edText)
@@ -381,6 +451,7 @@ class NewNoteActivity : AppCompatActivity() {
         btnPreviousDays = findViewById(R.id.btnPreviousDay)
         btnNextDate = findViewById(R.id.btnNextDay)
         rlNewNote = findViewById(R.id.rlNewNote)
+        recyclerView = findViewById(R.id.recyclerView)
         imgNote = findViewById(R.id.imgNote)
     }
 }

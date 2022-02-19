@@ -15,26 +15,40 @@ class SQLiteHelper(context: Context) :
 
     companion object {
 
-        private const val DATABASE_VERSION = 13
+        private const val DATABASE_VERSION = 19
         private const val DATABASE_NAME = "diary.db"
         private const val TBL_NOTE = "tbl_note"
+        private const val TBL_CHECKBOX = "tbl_checkbox"
         private const val ID = "_id"
         private const val DATE = "date"
         private const val TEXT = "text"
         private const val COLOR = "color"
         private const val IMAGE = "image"
+        private const val VALUE = "value"
+        private const val NOTE_ID = "note_id"
     }
-
 
     override fun onCreate(db: SQLiteDatabase?) {
         val createTblNote = ("CREATE TABLE " + TBL_NOTE + "("
-                + ID + " INTEGER PRIMARY KEY, " + DATE + " TEXT,"
-                + TEXT + " TEXT," + COLOR + " TEXT," + IMAGE + " BLOB" + ")")
+                + ID + " INTEGER PRIMARY KEY, "
+                + DATE + " TEXT,"
+                + TEXT + " TEXT,"
+                + COLOR + " TEXT,"
+                + IMAGE + " BLOB" + ")")
         db?.execSQL(createTblNote)
+
+        val createTblCheckbox = ("CREATE TABLE " + TBL_CHECKBOX + "("
+                + ID + " INTEGER PRIMARY KEY, "
+                + VALUE + " INTEGER,"
+                + TEXT + " TEXT,"
+                + NOTE_ID + " INTEGER,"
+                + " FOREIGN KEY(" + NOTE_ID + ") REFERENCES " + TBL_NOTE + "(" + ID + "))")
+        db?.execSQL(createTblCheckbox)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         db!!.execSQL("DROP TABLE IF EXISTS $TBL_NOTE")
+        db.execSQL("DROP TABLE IF EXISTS $TBL_CHECKBOX")
         onCreate(db)
     }
 
@@ -161,6 +175,9 @@ class SQLiteHelper(context: Context) :
 
         val success = db.delete(TBL_NOTE, "_id=$id", null)
         db.close()
+
+        deleteNotesCheckboxes(id)
+
         return success
     }
 
@@ -202,4 +219,97 @@ class SQLiteHelper(context: Context) :
         return ntList
 
     }
+
+    fun insertCheckbox(cb: CheckboxModel): Long {
+        val db = this.writableDatabase
+
+        val contentValues = ContentValues()
+        contentValues.put(VALUE, cb.value)
+        contentValues.put(TEXT, cb.text)
+        contentValues.put(NOTE_ID, cb.note_id)
+
+        val success = db.insert(TBL_CHECKBOX, null, contentValues)
+        db.close()
+        return success
+    }
+
+    @SuppressLint("Range")
+    fun getAllCheckbox(note_id: Int): ArrayList<CheckboxModel> {
+
+        val cbList: ArrayList<CheckboxModel> = ArrayList()
+        val selectQuery = "SELECT * FROM $TBL_CHECKBOX WHERE $NOTE_ID = $note_id"
+        val db = this.readableDatabase
+
+        val cursor: Cursor?
+
+        try {
+            cursor = db.rawQuery(selectQuery, null)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            db.execSQL(selectQuery)
+            return ArrayList()
+        }
+
+        var id: Int
+        var note_id: Int
+        var value: Int
+        var text: String
+
+        if (cursor.moveToFirst()) {
+            do {
+                id = cursor.getInt(cursor.getColumnIndex(ID))
+                note_id = cursor.getInt(cursor.getColumnIndex(NOTE_ID))
+                text = cursor.getString(cursor.getColumnIndex(TEXT))
+                value = cursor.getInt(cursor.getColumnIndex(VALUE))
+
+                val cb = CheckboxModel(id = id, note_id = note_id, text = text, value = value == 1)
+                cbList.add(cb)
+            } while (cursor.moveToNext())
+        }
+
+        return cbList
+    }
+
+    fun setCheckboxesNoteId(id: Int): Int {
+        val db = this.writableDatabase
+
+        val contentValues = ContentValues()
+        contentValues.put(NOTE_ID, id)
+        val success = db.update(TBL_CHECKBOX, contentValues, "$NOTE_ID = 0", null)
+        db.close()
+        return success
+    }
+
+    fun updateCheckbox(cb: CheckboxModel): Int {
+        val db = this.writableDatabase
+
+        val contentValues = ContentValues()
+        contentValues.put(VALUE, cb.value)
+        contentValues.put(TEXT, cb.text)
+        val success = db.update(TBL_CHECKBOX, contentValues, "$ID = ${cb.id}", null)
+        db.close()
+        return success
+
+    }
+
+    fun deleteCheckbox(id: Int): Int {
+        val db = this.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put(ID, id)
+
+        val success = db.delete(TBL_CHECKBOX, "_id=$id", null)
+        db.close()
+        return success
+    }
+
+    fun deleteNotesCheckboxes(id: Int): Int {
+        val db = this.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put(ID, id)
+
+        val success = db.delete(TBL_CHECKBOX, "$NOTE_ID=$id", null)
+        db.close()
+        return success
+    }
+
 }

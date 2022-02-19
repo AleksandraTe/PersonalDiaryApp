@@ -130,6 +130,12 @@ class NoteBottomSheetFragment : BottomSheetDialogFragment() {
             LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
         }
 
+        layoutAddCheckbox.setOnClickListener {
+            val intent = Intent("bottom_sheet_action")
+            intent.putExtra("action", "Checkbox")
+            LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
+        }
+
         layoutDownload.setOnClickListener {
             val intent = Intent("bottom_sheet_action")
             intent.putExtra("action", "Download")

@@ -94,6 +94,11 @@
             android:layout_margin="10dp"
             android:visibility="gone" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
         <EditText
             android:id="@+id/edText"
             android:layout_width="match_parent"
