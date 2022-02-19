@@ -64,7 +64,7 @@ class NewNoteActivity : AppCompatActivity() {
         initView()
         initRecyclerView()
         sqliteHelper = SQLiteHelper(this)
-//        sqliteHelper.deleteNotesCheckboxes(0)
+        sqliteHelper.deleteNotesCheckboxes(0)
         getCheckboxes()
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
@@ -84,7 +84,7 @@ class NewNoteActivity : AppCompatActivity() {
         }
 
         edText.requestFocus()
-
+        
         btnSave.setOnClickListener {
             saveNote()
         }
@@ -221,6 +221,7 @@ class NewNoteActivity : AppCompatActivity() {
         val dateSplit = date.split('/')
         val calendar = Calendar.getInstance()
         calendar.set(dateSplit[2].toInt(), dateSplit[1].toInt() - 1, dateSplit[0].toInt(), 0, 0, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
         val nt = NoteModel(id = id, date = calendar.timeInMillis, text = text, color = color, image = image)
 
         val status = sqliteHelper.updateNote(nt)
@@ -233,7 +234,9 @@ class NewNoteActivity : AppCompatActivity() {
             val item = recyclerView.getChildAt(i)
             cb.text = item.findViewById<EditText>(R.id.edCheckbox).text.toString()
             cb.value = item.findViewById<CheckBox>(R.id.cbValue).isChecked
+            Log.e("EEEE", cb.toString())
             sqliteHelper.updateCheckbox(cb)
+            i++
         }
 
         if (status > -1) {
@@ -262,6 +265,18 @@ class NewNoteActivity : AppCompatActivity() {
             val status = sqliteHelper.insertNote(nt)
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
+
+            saveCheckboxesNoteId(sqliteHelper.getNote(calendar.timeInMillis)[0].id)
+            val checkboxes = adapter!!.getAllCheckboxes()
+            Log.e("EEEE", checkboxes.toString())
+            var i = 0
+            for(cb in checkboxes){
+                val item = recyclerView.getChildAt(i)
+                cb.text = item.findViewById<EditText>(R.id.edCheckbox).text.toString()
+                cb.value = item.findViewById<CheckBox>(R.id.cbValue).isChecked
+                sqliteHelper.updateCheckbox(cb)
+                i++
+            }
 
             //Check insert success or not success
             if (status > -1) {
