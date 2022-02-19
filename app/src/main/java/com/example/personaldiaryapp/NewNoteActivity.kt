@@ -64,6 +64,7 @@ class NewNoteActivity : AppCompatActivity() {
         initView()
         initRecyclerView()
         sqliteHelper = SQLiteHelper(this)
+//        sqliteHelper.deleteNotesCheckboxes(0)
         getCheckboxes()
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
