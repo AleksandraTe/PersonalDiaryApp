@@ -2,7 +2,6 @@ package com.example.personaldiaryapp
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
