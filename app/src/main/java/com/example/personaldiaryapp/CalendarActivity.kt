@@ -38,14 +38,20 @@ class CalendarActivity : AppCompatActivity() {
         initRecyclerView()
         sqliteHelper = SQLiteHelper(this)
 
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = System.currentTimeMillis()
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+
+        btnAdd.isVisible = getOneNote(calendar.timeInMillis).isEmpty()
+
         calendarView.setOnDateChangeListener { _, i, i2, i3 ->
-            val mon = i2 + 1
-
-            val day = if(i3 < 10) "0$i3" else i3.toString()
-
-            selectedDate = "$day/$mon/$i"
-
-            btnAdd.isVisible = getOneNote(selectedDate).isEmpty()
+            calendar.set(i, i2, i3, 0, 0, 0)
+            calendar.set(Calendar.MILLISECOND, 0)
+            btnAdd.isVisible = getOneNote(calendar.timeInMillis).isEmpty()
+            selectedDate = "$i3/$i2/$i"
         }
 
         btnAdd.setOnClickListener {
@@ -59,7 +65,7 @@ class CalendarActivity : AppCompatActivity() {
             val intent = Intent(this, NewNoteActivity::class.java)
             intent.putExtra("new", "false")
             intent.putExtra("ntId", it.id)
-            intent.putExtra("ntDate", it.date)
+            intent.putExtra("ntDate", sdf.format(it.date))
             intent.putExtra("ntText", it.text)
             intent.putExtra("ntColor", it.color)
             startActivity(intent)
@@ -91,7 +97,7 @@ class CalendarActivity : AppCompatActivity() {
 
     }
 
-    private fun getOneNote(date: String): ArrayList<NoteModel> {
+    private fun getOneNote(date: Long): ArrayList<NoteModel> {
         val ntList = sqliteHelper.getNote(date)
         Log.e("error", "${ntList.size}")
 

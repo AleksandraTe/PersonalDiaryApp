@@ -1,5 +1,6 @@
 package com.example.personaldiaryapp
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         getNotes()
     }
+    @SuppressLint("SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -35,20 +37,30 @@ class MainActivity : AppCompatActivity() {
         initRecyclerView()
         sqliteHelper = SQLiteHelper(this)
         getNotes()
+        val sdf = SimpleDateFormat("dd/M/yyyy")
+
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = System.currentTimeMillis()
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+
         btnAdd.setOnClickListener { 
             val intent = Intent(this, NewNoteActivity::class.java)
 
-            val sdf = SimpleDateFormat("dd/M/yyyy")
-            val currentDate = sdf.format(Date())
-
-            if (sqliteHelper.getNote(currentDate).isEmpty()) {
+            if (sqliteHelper.getNote(calendar.timeInMillis).isEmpty()) {
                 intent.putExtra("new", "true")
             }
             else {
-                val todayNote = sqliteHelper.getNote(currentDate).get(0)
+                val todayNote = sqliteHelper.getNote(calendar.timeInMillis)[0]
                 intent.putExtra("new", "false")
                 intent.putExtra("ntId", todayNote.id)
-                intent.putExtra("ntDate", todayNote.date)
+
+                val calendar = Calendar.getInstance()
+                calendar.timeInMillis = todayNote.date
+
+                intent.putExtra("ntDate", sdf.format(calendar.time))
                 intent.putExtra("ntText", todayNote.text)
                 intent.putExtra("ntColor", todayNote.color)
             }
@@ -60,7 +72,11 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, NewNoteActivity::class.java)
             intent.putExtra("new", "false")
             intent.putExtra("ntId", it.id)
-            intent.putExtra("ntDate", it.date)
+
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = it.date
+
+            intent.putExtra("ntDate", sdf.format(calendar.time))
             intent.putExtra("ntText", it.text)
             intent.putExtra("ntColor", it.color)
             startActivity(intent)

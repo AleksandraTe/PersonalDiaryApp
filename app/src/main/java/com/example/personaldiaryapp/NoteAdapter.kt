@@ -6,6 +6,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class NoteAdapter: RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
     private var ntList: ArrayList<NoteModel> = ArrayList()
@@ -46,7 +49,11 @@ class NoteAdapter: RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
 
 
         fun bindView(nt:NoteModel){
-            date.text = nt.date
+
+            val sdf = SimpleDateFormat("dd/M/yyyy")
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = nt.date
+            date.text = sdf.format(calendar.time)
         }
     }
 }

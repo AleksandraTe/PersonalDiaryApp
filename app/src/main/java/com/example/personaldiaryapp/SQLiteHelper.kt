@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import java.io.ByteArrayOutputStream
+import java.util.*
+import kotlin.collections.ArrayList
 
 class SQLiteHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -28,7 +30,7 @@ class SQLiteHelper(context: Context) :
 
     override fun onCreate(db: SQLiteDatabase?) {
         val createTblNote = ("CREATE TABLE " + TBL_NOTE + "("
-                + ID + " INTEGER PRIMARY KEY, " + DATE + " TEXT,"
+                + ID + " INTEGER PRIMARY KEY, " + DATE + " NUMERIC,"
                 + TEXT + " TEXT," + COLOR + " TEXT," + IMAGE + " BLOB" + ")")
         db?.execSQL(createTblNote)
     }
@@ -64,9 +66,9 @@ class SQLiteHelper(context: Context) :
     }
 
     @SuppressLint("Range")
-    fun getNote(date: String): ArrayList<NoteModel> {
+    fun getNote(date: Long): ArrayList<NoteModel> {
         val ntList: ArrayList<NoteModel> = ArrayList()
-        val selectQuery = "SELECT * FROM $TBL_NOTE WHERE $DATE " + "= \"$date\""
+        val selectQuery = "SELECT * FROM $TBL_NOTE WHERE $DATE = $date"
         val db = this.readableDatabase
 
         val cursor: Cursor?
@@ -80,7 +82,7 @@ class SQLiteHelper(context: Context) :
         }
 
         var id: Int
-        var date: String
+        var date: Long
         var text: String
         var color: String
         var image: Bitmap
@@ -88,7 +90,7 @@ class SQLiteHelper(context: Context) :
 
         if (cursor.moveToFirst()) {
             id = cursor.getInt(cursor.getColumnIndex(ID))
-            date = cursor.getString(cursor.getColumnIndex(DATE))
+            date = cursor.getLong(cursor.getColumnIndex(DATE))
             text = cursor.getString(cursor.getColumnIndex(TEXT))
             color = cursor.getString(cursor.getColumnIndex(COLOR))
             image = cursor.getBlob(cursor.getColumnIndex(IMAGE)).toBitmap()
@@ -119,7 +121,7 @@ class SQLiteHelper(context: Context) :
         }
 
         var id: Int
-        var date: String
+        var date: Long
         var text: String
         var color: String
         var image: Bitmap
@@ -127,7 +129,7 @@ class SQLiteHelper(context: Context) :
         if (cursor.moveToFirst()) {
             do {
                 id = cursor.getInt(cursor.getColumnIndex(ID))
-                date = cursor.getString(cursor.getColumnIndex(DATE))
+                date = cursor.getLong(cursor.getColumnIndex(DATE))
                 text = cursor.getString(cursor.getColumnIndex(TEXT))
                 color = cursor.getString(cursor.getColumnIndex(COLOR))
                 image = cursor.getBlob(cursor.getColumnIndex(IMAGE)).toBitmap()
@@ -181,7 +183,7 @@ class SQLiteHelper(context: Context) :
         }
 
         var id: Int
-        var date: String
+        var date: Long
         var text: String
         var color: String
         var image: Bitmap
@@ -189,7 +191,7 @@ class SQLiteHelper(context: Context) :
         if (cursor.moveToFirst()) {
             do {
                 id = cursor.getInt(cursor.getColumnIndex(ID))
-                date = cursor.getString(cursor.getColumnIndex(DATE))
+                date = cursor.getLong(cursor.getColumnIndex(DATE))
                 text = cursor.getString(cursor.getColumnIndex(TEXT))
                 color = cursor.getString(cursor.getColumnIndex(COLOR))
                 image = cursor.getBlob(cursor.getColumnIndex(IMAGE)).toBitmap()
