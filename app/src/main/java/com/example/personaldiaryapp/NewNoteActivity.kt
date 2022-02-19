@@ -83,7 +83,7 @@ class NewNoteActivity : AppCompatActivity() {
         }
 
         edText.requestFocus()
-        
+
         btnSave.setOnClickListener {
             saveNote()
         }
@@ -224,7 +224,7 @@ class NewNoteActivity : AppCompatActivity() {
 
         val status = sqliteHelper.updateNote(nt)
 
-        saveCheckboxesNoteId(sqliteHelper.getNote(date)[0].id)
+        saveCheckboxesNoteId(sqliteHelper.getNote(calendar.timeInMillis)[0].id)
         val checkboxes = adapter!!.getAllCheckboxes()
         Log.e("EEEE", checkboxes.toString())
         var i = 0
