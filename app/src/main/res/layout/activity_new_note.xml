@@ -88,18 +88,6 @@
         android:background="@drawable/rounded_corner_view"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/imgNote"
-            android:layout_width="wrap_content"
-            android:layout_height="300dp"
-            android:layout_margin="10dp"
-            android:visibility="gone" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
         <EditText
             android:id="@+id/edText"
             android:layout_width="match_parent"
@@ -108,6 +96,18 @@
             android:background="@null"
             android:hint="Enter text"
             android:inputType="textMultiLine" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/imgNote"
+            android:layout_width="wrap_content"
+            android:layout_height="300dp"
+            android:layout_margin="10dp"
+            android:visibility="gone" />
 
     </LinearLayout>
 

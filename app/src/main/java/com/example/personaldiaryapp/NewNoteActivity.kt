@@ -18,9 +18,9 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.children
 import androidx.core.view.drawToBitmap
 import androidx.core.view.isVisible
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -29,7 +29,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_new_note.*
 import pub.devrel.easypermissions.EasyPermissions
-import java.io.ByteArrayOutputStream
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -55,6 +54,7 @@ class NewNoteActivity : AppCompatActivity() {
     private var REQUEST_CODE_IMAGE = 456
     private var selectedImagePath = ""
     private var hasImage = false
+    private lateinit var bmp: Bitmap
 
     @SuppressLint("SimpleDateFormat")
     @RequiresApi(Build.VERSION_CODES.O)
@@ -112,6 +112,8 @@ class NewNoteActivity : AppCompatActivity() {
             sqliteHelper.deleteCheckbox(it.id)
             getCheckboxes()
         }
+
+        edText.setTextColor(Color.BLACK)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -167,6 +169,7 @@ class NewNoteActivity : AppCompatActivity() {
         val date = intent.getStringExtra("ntDate")
         val text = intent.getStringExtra("ntText")
         val color = intent.getStringExtra("ntColor")
+        hasImage = intent.getBooleanExtra("ntHasImage", false)
         val dateSplit = date!!.split('/')
         val calendar = Calendar.getInstance()
         calendar.set(dateSplit[2].toInt(), dateSplit[1].toInt() - 1, dateSplit[0].toInt(), 0, 0, 0)
@@ -201,7 +204,9 @@ class NewNoteActivity : AppCompatActivity() {
         var image: Bitmap? = null
         Log.e("EEEE", hasImage.toString())
         if(hasImage) {
-            image = imgNote.drawToBitmap()
+            image = imgNote.drawable.toBitmap()
+            val imageMulti : Float = 1000 / image.width.toFloat()
+            image = Bitmap.createScaledBitmap(image, 1000, (image.height * imageMulti).toInt(), true)
         }
         val id = intent.getIntExtra("ntId", 0)
 
@@ -241,7 +246,9 @@ class NewNoteActivity : AppCompatActivity() {
         var image: Bitmap? = null
         Log.e("EEEE", hasImage.toString())
         if(hasImage) {
-            image = imgNote.drawToBitmap()
+            image = imgNote.drawable.toBitmap()
+            val imageMulti : Float = 1000 / image.width.toFloat()
+            image = Bitmap.createScaledBitmap(image, 1000, (image.height * imageMulti).toInt(), true)
         }
         if(text.isEmpty()) {
             Toast.makeText(this, "Please enter requried field", Toast.LENGTH_SHORT).show()
@@ -407,16 +414,29 @@ class NewNoteActivity : AppCompatActivity() {
 
     private fun viewToBitmap():Bitmap{
 
-        val dateBitmap = tvDate.drawToBitmap()
-        val imgBitmap = imgNote.drawable.toBitmap()
-        val textBitmap = edText.drawToBitmap()
+        var dateBitmap = tvDate.drawToBitmap()
+        var imgBitmap = imgNote.drawable.toBitmap()
+        var textBitmap = edText.drawToBitmap()
 
-        val bmOverlay = Bitmap.createBitmap(imgBitmap.width, imgBitmap.height, imgBitmap.config)
+
+
+        imgBitmap = Bitmap.createScaledBitmap(imgBitmap, imgBitmap.width * 3 / 2, imgBitmap.height * 3 / 2 , true)
+        dateBitmap = Bitmap.createScaledBitmap(dateBitmap, dateBitmap.width * 5 / 2, dateBitmap.height * 5 / 2, true)
+        textBitmap = Bitmap.createScaledBitmap(textBitmap, textBitmap.width * 5 / 2,  textBitmap.height * 5 / 2, true)
+
+        val bmOverlay = Bitmap.createBitmap(bmp.width, bmp.height, bmp.config)
 
         val canvas = Canvas(bmOverlay)
-        canvas.drawBitmap(imgBitmap, Matrix(), null)
-        canvas.drawBitmap(textBitmap, 0F , imgNote.height.toFloat(), null)
-        canvas.drawBitmap(dateBitmap, 50F, 50F, null)
+        canvas.drawBitmap(imgBitmap, (bmp.width - imgBitmap.width)/2f, 800f, null)
+        canvas.drawBitmap(textBitmap, 400F , imgBitmap.height + 1100F, null)
+        canvas.drawBitmap(dateBitmap, 400F, 350F, null)
+        var i = 0
+        for(item in recyclerView.children){
+            var itemBitmap = item.drawToBitmap()
+            itemBitmap = Bitmap.createScaledBitmap(itemBitmap, item.width * 2, item.height * 2, true)
+            canvas.drawBitmap(itemBitmap, 300F, imgBitmap.height + textBitmap.height + 1900F + 300F * i, null)
+            i++
+        }
 
         return bmOverlay
 
@@ -435,16 +455,27 @@ class NewNoteActivity : AppCompatActivity() {
     }
 
     private fun savePdf() {
+
+        bmp = BitmapFactory.decodeResource(resources, R.drawable.emptytemplate)
+
+        val pdfDocument = PdfDocument()
+
+        val pageInfo = PdfDocument.PageInfo.Builder(bmp.width, bmp.height, 1).create()
+        val page = pdfDocument.startPage(pageInfo)
+        val canvas = page.canvas
+        val paint = Paint()
+        paint.color =  (Color.parseColor("#FFFFFF"))
+        canvas.drawPaint(paint)
+
+        val bmp = Bitmap.createScaledBitmap(bmp, bmp.width, bmp.height, true)
+        canvas.drawBitmap(bmp, 0f, 0f, null)
+        canvas.drawBitmap(viewToBitmap(), 0F, 0F, null)
+
+        pdfDocument.finishPage(page)
+
         val mFileName = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(System.currentTimeMillis())
         val mFilePath = Environment.getExternalStorageDirectory().toString() + "/" + mFileName + ".pdf"
 
-        val pdfDocument = PdfDocument()
-        val pageInfo = PdfDocument.PageInfo.Builder(imgNote.width, 2010,1).create()
-        val page = pdfDocument.startPage(pageInfo)
-        val canvas = page.canvas
-
-        canvas.drawBitmap(viewToBitmap(), 0F, 0F, null)
-        pdfDocument.finishPage(page)
         pdfDocument.writeTo(FileOutputStream(mFilePath))
         pdfDocument.close()
 

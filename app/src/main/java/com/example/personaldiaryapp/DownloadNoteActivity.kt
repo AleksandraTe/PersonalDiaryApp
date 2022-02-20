@@ -82,13 +82,13 @@ class DownloadNoteActivity : AppCompatActivity() {
 
                 when {
                     cbText.isChecked && !cbChecklist.isChecked-> {
-                        bmpToDo = BitmapFactory.decodeResource(resources, R.drawable.textfield)
+                        bmpToDo = BitmapFactory.decodeResource(resources, R.drawable.text)
                     }
                     cbChecklist.isChecked && !cbText.isChecked -> {
-                        bmpToDo = BitmapFactory.decodeResource(resources, R.drawable.todolist)
+                        bmpToDo = BitmapFactory.decodeResource(resources, R.drawable.todo)
                     }
                     cbChecklist.isChecked && cbText.isChecked -> {
-                        bmpToDo = BitmapFactory.decodeResource(resources, R.drawable.texttodo)
+                        bmpToDo = BitmapFactory.decodeResource(resources, R.drawable.todotext)
                     }
                 }
                 downloadEmptyPdf()
