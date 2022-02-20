@@ -54,6 +54,7 @@ class NewNoteActivity : AppCompatActivity() {
     private var READ_STORAGE_PERM = 123
     private var REQUEST_CODE_IMAGE = 456
     private var selectedImagePath = ""
+    private var hasImage = false
 
     @SuppressLint("SimpleDateFormat")
     @RequiresApi(Build.VERSION_CODES.O)
@@ -157,17 +158,12 @@ class NewNoteActivity : AppCompatActivity() {
             intent.putExtra("ntDate", nextDateString)
             intent.putExtra("ntText", todayNote.text)
             intent.putExtra("ntColor", todayNote.color)
+            intent.putExtra("ntHasImgae", todayNote.hasImage)
         }
         startActivity(intent)
         finish()
     }
 
-    fun Bitmap.toByteArray():ByteArray{
-        ByteArrayOutputStream().apply {
-            compress(Bitmap.CompressFormat.JPEG,100,this)
-            return toByteArray()
-        }
-    }
 
     private fun loadNewNoteView() {
 
@@ -193,7 +189,6 @@ class NewNoteActivity : AppCompatActivity() {
         calendar.set(Calendar.MILLISECOND, 0)
         Log.e("EEEE", (calendar.timeInMillis).toString())
         Log.e("EEEE", date)
-        val image = sqliteHelper.getNote(calendar.timeInMillis)[0].image
 
         selectedColor = color!!
 
@@ -205,8 +200,12 @@ class NewNoteActivity : AppCompatActivity() {
         }
         tvDate.text = date
         edText.setText(text)
-        imgNote.setImageBitmap(image)
-        imgNote.visibility = View.VISIBLE
+        val hasImage = intent.getBooleanExtra("ntHasImage", false)
+        if(hasImage) {
+            val image = sqliteHelper.getNote(calendar.timeInMillis)[0].image
+            imgNote.setImageBitmap(image)
+            imgNote.visibility = View.VISIBLE
+        }
         rlNewNote.setBackgroundColor(Color.parseColor(color))
 
     }
@@ -215,14 +214,18 @@ class NewNoteActivity : AppCompatActivity() {
         val date = tvDate.text.toString()
         val text = edText.text.toString()
         val color = selectedColor
-        val image = imgNote.drawToBitmap()
+        var image: Bitmap? = null
+        Log.e("EEEE", hasImage.toString())
+        if(hasImage) {
+            image = imgNote.drawToBitmap()
+        }
         val id = intent.getIntExtra("ntId", 0)
 
         val dateSplit = date.split('/')
         val calendar = Calendar.getInstance()
         calendar.set(dateSplit[2].toInt(), dateSplit[1].toInt() - 1, dateSplit[0].toInt(), 0, 0, 0)
         calendar.set(Calendar.MILLISECOND, 0)
-        val nt = NoteModel(id = id, date = calendar.timeInMillis, text = text, color = color, image = image)
+        val nt = NoteModel(id = id, date = calendar.timeInMillis, text = text, color = color, image = image, hasImage)
 
         val status = sqliteHelper.updateNote(nt)
 
@@ -251,8 +254,11 @@ class NewNoteActivity : AppCompatActivity() {
         val date = tvDate.text.toString()
         val text = edText.text.toString()
         var color = selectedColor
-        val image = imgNote.drawToBitmap()
-
+        var image: Bitmap? = null
+        Log.e("EEEE", hasImage.toString())
+        if(hasImage) {
+            image = imgNote.drawToBitmap()
+        }
         if(text.isEmpty()) {
             Toast.makeText(this, "Please enter requried field", Toast.LENGTH_SHORT).show()
         } else {
@@ -261,7 +267,7 @@ class NewNoteActivity : AppCompatActivity() {
             val calendar = Calendar.getInstance()
             calendar.set(dateSplit[2].toInt(), dateSplit[1].toInt() - 1, dateSplit[0].toInt(), 0, 0, 0)
             calendar.set(Calendar.MILLISECOND, 0)
-            val nt = NoteModel(id = 0, date = calendar.timeInMillis, text = text, color = color, image = image)
+            val nt = NoteModel(id = 0, date = calendar.timeInMillis, text = text, color = color, image = image, hasImage)
             val status = sqliteHelper.insertNote(nt)
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
@@ -404,7 +410,8 @@ class NewNoteActivity : AppCompatActivity() {
                         var bitmap = BitmapFactory.decodeStream(inputStream)
                         imgNote.setImageBitmap(bitmap)
                         imgNote.visibility = View.VISIBLE
-
+                        hasImage = true
+                        Log.e("EEEE", hasImage.toString())
                         selectedImagePath = getPathFromUri(selectedImageUrl)!!
                     }catch (e:Exception){
                         Log.e("eee347", e.message!!)

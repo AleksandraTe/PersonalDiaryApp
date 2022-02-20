@@ -67,6 +67,7 @@ class CalendarActivity : AppCompatActivity() {
             intent.putExtra("ntDate", sdf.format(it.date))
             intent.putExtra("ntText", it.text)
             intent.putExtra("ntColor", it.color)
+            intent.putExtra("ntHasImage", it.hasImage)
             startActivity(intent)
         }
 

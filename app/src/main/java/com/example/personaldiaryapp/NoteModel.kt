@@ -7,6 +7,6 @@ data class NoteModel(
     val date: Long,
     val text: String,
     val color: String,
-    val image: Bitmap
-
+    val image: Bitmap?,
+    val hasImage: Boolean
 )

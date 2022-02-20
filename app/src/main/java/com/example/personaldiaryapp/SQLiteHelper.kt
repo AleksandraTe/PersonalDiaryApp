@@ -26,6 +26,7 @@ class SQLiteHelper(context: Context) :
         private const val IMAGE = "image"
         private const val VALUE = "value"
         private const val NOTE_ID = "note_id"
+        private const val HAS_IMAGE = "has_image"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -34,6 +35,7 @@ class SQLiteHelper(context: Context) :
                 + DATE + " TEXT,"
                 + TEXT + " TEXT,"
                 + COLOR + " TEXT,"
+                + HAS_IMAGE + " INTEGER,"
                 + IMAGE + " BLOB" + ")")
         db?.execSQL(createTblNote)
 
@@ -59,8 +61,10 @@ class SQLiteHelper(context: Context) :
         contentValues.put(DATE, nt.date)
         contentValues.put(TEXT, nt.text)
         contentValues.put(COLOR, nt.color)
-        contentValues.put(IMAGE, nt.image.toByteArray())
-
+        contentValues.put(HAS_IMAGE, if(nt.hasImage) 1 else 0)
+        if(nt.hasImage){
+            contentValues.put(IMAGE, nt.image?.toByteArray())
+        }
         val success = db.insert(TBL_NOTE, null, contentValues)
         db.close()
         return success
@@ -97,7 +101,8 @@ class SQLiteHelper(context: Context) :
         var date: Long
         var text: String
         var color: String
-        var image: Bitmap
+        var image: Bitmap? = null
+        var hasImage: Boolean
 
 
         if (cursor.moveToFirst()) {
@@ -105,9 +110,12 @@ class SQLiteHelper(context: Context) :
             date = cursor.getLong(cursor.getColumnIndex(DATE))
             text = cursor.getString(cursor.getColumnIndex(TEXT))
             color = cursor.getString(cursor.getColumnIndex(COLOR))
-            image = cursor.getBlob(cursor.getColumnIndex(IMAGE)).toBitmap()
+            hasImage = cursor.getInt(cursor.getColumnIndex(HAS_IMAGE)) == 1
+            if(hasImage){
+                image = cursor.getBlob(cursor.getColumnIndex(IMAGE)).toBitmap()
+            }
 
-            val nt = NoteModel(id = id, date = date, text = text, color = color, image = image)
+            val nt = NoteModel(id = id, date = date, text = text, color = color, image = image, hasImage)
             ntList.add(nt)
         }
 
@@ -136,7 +144,8 @@ class SQLiteHelper(context: Context) :
         var date: Long
         var text: String
         var color: String
-        var image: Bitmap
+        var image: Bitmap? = null
+        var hasImage: Boolean
 
         if (cursor.moveToFirst()) {
             do {
@@ -144,9 +153,11 @@ class SQLiteHelper(context: Context) :
                 date = cursor.getLong(cursor.getColumnIndex(DATE))
                 text = cursor.getString(cursor.getColumnIndex(TEXT))
                 color = cursor.getString(cursor.getColumnIndex(COLOR))
-                image = cursor.getBlob(cursor.getColumnIndex(IMAGE)).toBitmap()
-
-                val nt = NoteModel(id = id, date = date, text = text, color = color, image = image)
+                hasImage = cursor.getInt(cursor.getColumnIndex(HAS_IMAGE)) == 1
+                if(hasImage) {
+                    image = cursor.getBlob(cursor.getColumnIndex(IMAGE)).toBitmap()
+                }
+                val nt = NoteModel(id = id, date = date, text = text, color = color, image = image, hasImage)
                 ntList.add(nt)
             } while (cursor.moveToNext())
         }
@@ -156,13 +167,16 @@ class SQLiteHelper(context: Context) :
 
     fun updateNote(nt: NoteModel): Int {
         val db = this.writableDatabase
-        val stream = ByteArrayOutputStream()
 
         val contentValues = ContentValues()
         contentValues.put(DATE, nt.date)
         contentValues.put(TEXT, nt.text)
         contentValues.put(COLOR, nt.color)
-        contentValues.put(IMAGE, nt.image.toByteArray())
+        contentValues.put(HAS_IMAGE, nt.hasImage)
+        if(nt.hasImage){
+            contentValues.put(IMAGE, nt.image?.toByteArray())
+        }
+
         val success = db.update(TBL_NOTE, contentValues, "_id=" + nt.id, null)
         db.close()
         return success
@@ -201,7 +215,8 @@ class SQLiteHelper(context: Context) :
         var date: Long
         var text: String
         var color: String
-        var image: Bitmap
+        var image: Bitmap?
+        var hasImage: Boolean
 
         if (cursor.moveToFirst()) {
             do {
@@ -209,9 +224,10 @@ class SQLiteHelper(context: Context) :
                 date = cursor.getLong(cursor.getColumnIndex(DATE))
                 text = cursor.getString(cursor.getColumnIndex(TEXT))
                 color = cursor.getString(cursor.getColumnIndex(COLOR))
-                image = cursor.getBlob(cursor.getColumnIndex(IMAGE)).toBitmap()
+                hasImage = cursor.getInt(cursor.getColumnIndex(HAS_IMAGE)) == 1
+                image = if(hasImage) cursor.getBlob(cursor.getColumnIndex(IMAGE)).toBitmap() else null
 
-                val nt = NoteModel(id = id, date = date, text = text, color = color, image = image)
+                val nt = NoteModel(id = id, date = date, text = text, color = color, image = image, hasImage)
                 ntList.add(nt)
             } while (cursor.moveToNext())
         }
