@@ -82,7 +82,7 @@ class DownloadNoteActivity : AppCompatActivity() {
 
                 when {
                     cbText.isChecked && !cbChecklist.isChecked-> {
-                        bmpToDo = BitmapFactory.decodeResource(resources, R.drawable.textfield)
+                        bmpToDo = BitmapFactory.decodeResource(resources, R.drawable.emptytemplate)
                     }
                     cbChecklist.isChecked && !cbText.isChecked -> {
                         bmpToDo = BitmapFactory.decodeResource(resources, R.drawable.todolist)
