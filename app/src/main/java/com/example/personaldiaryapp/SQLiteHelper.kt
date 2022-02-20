@@ -165,6 +165,50 @@ class SQLiteHelper(context: Context) :
         return ntList
     }
 
+    @SuppressLint("Range")
+    fun getTimeRangeNotes(startDate: Long, endDate:Long): ArrayList<NoteModel> {
+        val ntList: ArrayList<NoteModel> = ArrayList()
+        val selectQuery =
+            "SELECT * FROM $TBL_NOTE WHERE $DATE > \"$startDate\" AND $DATE < \"$endDate\""
+        val db = this.readableDatabase
+
+        val cursor: Cursor?
+
+        try {
+            cursor = db.rawQuery(selectQuery, null)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            db.execSQL(selectQuery)
+            return ArrayList()
+        }
+
+        var id: Int
+        var date: Long
+        var text: String
+        var color: String
+        var image: Bitmap? = null
+        var hasImage: Boolean
+
+
+        if (cursor.moveToFirst()) {
+            do {
+                id = cursor.getInt(cursor.getColumnIndex(ID))
+                date = cursor.getLong(cursor.getColumnIndex(DATE))
+                text = cursor.getString(cursor.getColumnIndex(TEXT))
+                color = cursor.getString(cursor.getColumnIndex(COLOR))
+                hasImage = cursor.getInt(cursor.getColumnIndex(HAS_IMAGE)) == 1
+                if(hasImage) {
+                    image = cursor.getBlob(cursor.getColumnIndex(IMAGE)).toBitmap()
+                }
+                val nt = NoteModel(id = id, date = date, text = text, color = color, image = image, hasImage)
+                ntList.add(nt)
+            } while (cursor.moveToNext())
+        }
+
+        return ntList
+
+    }
+
     fun updateNote(nt: NoteModel): Int {
         val db = this.writableDatabase
 

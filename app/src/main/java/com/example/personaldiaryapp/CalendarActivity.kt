@@ -50,7 +50,7 @@ class CalendarActivity : AppCompatActivity() {
             calendar.set(i, i2, i3, 0, 0, 0)
             calendar.set(Calendar.MILLISECOND, 0)
             btnAdd.isVisible = getOneNote(calendar.timeInMillis).isEmpty()
-            selectedDate = "$i3/$i2/$i"
+            selectedDate = "$i3/${i2+1}/$i"
         }
 
         btnAdd.setOnClickListener {

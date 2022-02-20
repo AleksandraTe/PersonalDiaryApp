@@ -45,7 +45,7 @@ class NewNoteActivity : AppCompatActivity() {
     private lateinit var btnNextDate: Button
     private lateinit var tvDate: TextView
     private lateinit var edText: EditText
-    private lateinit var sqliteHelper:SQLiteHelper
+    private lateinit var sqliteHelper: SQLiteHelper
     private lateinit var rlNewNote: RelativeLayout
     private lateinit var selectedColor: String
     private lateinit var imgNote: ImageView
