@@ -109,25 +109,9 @@ class NewNoteActivity : AppCompatActivity() {
         }
 
         adapter?.setOnClickDeleteItem {
-            deleteChechbox(it.id)
-        }
-    }
-
-    private fun deleteChechbox(id: Int) {
-        val builder = AlertDialog.Builder(this)
-        builder.setMessage("Are you sure you want to delete note?")
-        builder.setCancelable(true)
-        builder.setPositiveButton("Yes") { dialog, _ ->
-            sqliteHelper.deleteCheckbox(id)
+            sqliteHelper.deleteCheckbox(it.id)
             getCheckboxes()
-            dialog.dismiss()
         }
-        builder.setNegativeButton("No") { dialog, _ ->
-            dialog.dismiss()
-        }
-
-        val alert = builder.create()
-        alert.show()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
