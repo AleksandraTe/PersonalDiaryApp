@@ -5,62 +5,100 @@
     android:layout_height="match_parent"
     android:background="@color/background"
     android:orientation="vertical"
+    android:gravity="center"
     tools:context=".DownloadNoteActivity">
 
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="100dp"
-        android:gravity="center"
-        android:text="Choose dates and download multiple files:"
-        android:textSize="25sp" />
-
-    <Button
-        android:id="@+id/openCalendar"
-        android:layout_width="wrap_content"
+        android:layout_width="330dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:textColor="@color/light_button"
-        android:text="Select dates"/>
+        android:layout_marginTop="70dp"
+        android:gravity="center"
+        android:text="Download and print files"
+        android:textSize="40sp"
+        android:textColor="@color/dark_text"
+        android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/tvDatePicker"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:textColor="@color/dark_button"
-        android:textSize="20sp" />
+        android:background="@drawable/rounded_corner_view">
+
+        <Button
+            android:id="@+id/openCalendar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="60dp"
+            android:text="SELECT"
+            android:textColor="@color/light_text"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="160dp"
+            android:layout_marginTop="65dp"
+            android:gravity="left"
+            android:text="dates and download notes"
+            android:textColor="@color/dark_button"
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/tvDatePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="160dp"
+            android:gravity="left"
+            android:textStyle="bold"
+            android:textColor="@color/dark_button"
+            android:textSize="25sp" />
+
+        <Button
+            android:id="@+id/btnDownloadFiles"
+            android:layout_width="70dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="270dp"
+            android:layout_marginTop="150dp"
+            android:layout_marginBottom="40dp"
+            android:background="#00FFFFFF"
+            android:drawableTop="@drawable/ic_download_35"
+            android:drawableTint="@color/dark_button" />
 
 
-    <Button
-        android:id="@+id/btnDownloadFiles"
+    </RelativeLayout>
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_margin="20dp"
-        android:textSize="20sp"
-        android:backgroundTint="@color/dark_button"
-        android:text="Print files"
-        android:gravity="center"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/rounded_corner_view">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="100dp"
-        android:gravity="center"
-        android:text="Choose dates and download multiple files:"
-        android:textSize="25sp" />
+        <TextView
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="80dp"
+            android:gravity="center"
+            android:text="Generate and download empty note"
+            android:textColor="@color/dark_button"
+            android:textSize="25sp" />
 
-    <Button
-        android:id="@+id/btnDownload"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_margin="20dp"
-        android:textSize="20sp"
-        android:backgroundTint="@color/dark_button"
-        android:text="Print empty note"
-        android:gravity="center"/>
+        <Button
+            android:id="@+id/btnDownload"
+            android:layout_width="70dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="270dp"
+            android:layout_marginTop="100dp"
+            android:layout_marginBottom="80dp"
+            android:background="#00FFFFFF"
+            android:drawableTop="@drawable/ic_settings"
+            android:drawableTint="@color/dark_button"
+            android:gravity="center" />
+
+    </RelativeLayout>
 
 </LinearLayout>

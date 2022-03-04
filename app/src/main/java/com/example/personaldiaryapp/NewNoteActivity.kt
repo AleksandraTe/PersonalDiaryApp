@@ -154,7 +154,7 @@ class NewNoteActivity : AppCompatActivity() {
     private fun loadNewNoteView() {
 
         val date = intent.getStringExtra("ntDate")
-        selectedColor = "#B3B7C0"
+        selectedColor = "#CBCCEC"
         btnUpdate.isVisible = false
         btnSave.setOnClickListener {
             saveNote()

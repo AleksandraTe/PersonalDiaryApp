@@ -91,7 +91,7 @@ class NoteBottomSheetFragment : BottomSheetDialogFragment() {
             imgColor1.setImageResource(R.drawable.ic_checkmark)
             imgColor2.setImageResource(0)
             imgColor3.setImageResource(0)
-            selectedColor = "#B3B7C0"
+            selectedColor = "#CBCCEC"
 
             Toast.makeText(requireContext(),selectedColor,Toast.LENGTH_SHORT)
             val intent = Intent("bottom_sheet_action")
