@@ -15,7 +15,7 @@ class SQLiteHelper(context: Context) :
 
     companion object {
 
-        private const val DATABASE_VERSION = 28
+        private const val DATABASE_VERSION = 29
         private const val DATABASE_NAME = "diary.db"
         private const val TBL_NOTE = "tbl_note"
         private const val TBL_CHECKBOX = "tbl_checkbox"
@@ -32,7 +32,7 @@ class SQLiteHelper(context: Context) :
     override fun onCreate(db: SQLiteDatabase?) {
         val createTblNote = ("CREATE TABLE " + TBL_NOTE + "("
                 + ID + " INTEGER PRIMARY KEY, "
-                + DATE + " TEXT,"
+                + DATE + " INTEGER,"
                 + TEXT + " TEXT,"
                 + COLOR + " TEXT,"
                 + HAS_IMAGE + " INTEGER,"
@@ -169,7 +169,7 @@ class SQLiteHelper(context: Context) :
     fun getTimeRangeNotes(startDate: Long, endDate:Long): ArrayList<NoteModel> {
         val ntList: ArrayList<NoteModel> = ArrayList()
         val selectQuery =
-            "SELECT * FROM $TBL_NOTE WHERE $DATE > \"$startDate\" AND $DATE < \"$endDate\""
+            "SELECT * FROM $TBL_NOTE WHERE $DATE >= \"$startDate\" AND $DATE <= \"$endDate\""
         val db = this.readableDatabase
 
         val cursor: Cursor?

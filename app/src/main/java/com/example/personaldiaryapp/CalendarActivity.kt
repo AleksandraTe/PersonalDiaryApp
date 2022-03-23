@@ -3,7 +3,6 @@ package com.example.personaldiaryapp
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.CalendarView
 import androidx.appcompat.app.AlertDialog
@@ -99,7 +98,6 @@ class CalendarActivity : AppCompatActivity() {
 
     private fun getOneNote(date: Long): ArrayList<NoteModel> {
         val ntList = sqliteHelper.getNote(date)
-        Log.e("error", "${ntList.size}")
 
         adapter?.addItems(ntList)
 

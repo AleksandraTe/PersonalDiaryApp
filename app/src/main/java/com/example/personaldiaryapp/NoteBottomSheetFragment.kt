@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -85,61 +84,45 @@ class NoteBottomSheetFragment : BottomSheetDialogFragment() {
         setListener()
     }
 
+    private fun sendBroadcast(action: String, color: String = ""){
+        val intent = Intent("bottom_sheet_action")
+        if(color != ""){
+            selectedColor = color
+            intent.putExtra("selectedColor", selectedColor)
+        }
+        intent.putExtra("action", action)
+        LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
+    }
+
     private fun setListener(){
         fNote1.setOnClickListener {
-
             imgColor1.setImageResource(R.drawable.ic_checkmark)
             imgColor2.setImageResource(0)
             imgColor3.setImageResource(0)
-            selectedColor = "#CBCCEC"
-
-            Toast.makeText(requireContext(),selectedColor,Toast.LENGTH_SHORT)
-            val intent = Intent("bottom_sheet_action")
-            intent.putExtra("selectedColor", selectedColor)
-            intent.putExtra("action", "Gray")
-            LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
+            sendBroadcast("Gray", "#CBCCEC")
         }
         fNote2.setOnClickListener {
-
             imgColor1.setImageResource(0)
             imgColor2.setImageResource(R.drawable.ic_checkmark)
             imgColor3.setImageResource(0)
-            selectedColor = "#B9CFF6"
-
-            val intent = Intent("bottom_sheet_action")
-            intent.putExtra("selectedColor", selectedColor)
-            intent.putExtra("action", "Blue")
-            LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
+            sendBroadcast("Blue", "#B9CFF6")
         }
         fNote3.setOnClickListener {
-
             imgColor1.setImageResource(0)
             imgColor2.setImageResource(0)
             imgColor3.setImageResource(R.drawable.ic_checkmark)
-            selectedColor = "#EEC8C8"
-
-            val intent = Intent("bottom_sheet_action")
-            intent.putExtra("selectedColor", selectedColor)
-            intent.putExtra("action", "Red")
-            LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
+            sendBroadcast("Red","#EEC8C8")
         }
-
         layoutAddImage.setOnClickListener {
-            val intent = Intent("bottom_sheet_action")
-            intent.putExtra("action", "Image")
-            LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
+            sendBroadcast("Image")
         }
 
         layoutAddCheckbox.setOnClickListener {
-            val intent = Intent("bottom_sheet_action")
-            intent.putExtra("action", "Checkbox")
-            LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
+            sendBroadcast("Checkbox")
         }
 
         layoutDownload.setOnClickListener {
-            val intent = Intent("bottom_sheet_action")
-            intent.putExtra("action", "Download")
-            LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
+            sendBroadcast("Download")
         }
     }
 }

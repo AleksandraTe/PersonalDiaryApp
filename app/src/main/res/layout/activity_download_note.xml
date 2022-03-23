@@ -95,7 +95,7 @@
             android:layout_marginTop="100dp"
             android:layout_marginBottom="80dp"
             android:background="#00FFFFFF"
-            android:drawableTop="@drawable/ic_settings"
+            android:drawableTop="@drawable/ic_document"
             android:drawableTint="@color/dark_button"
             android:gravity="center" />
 

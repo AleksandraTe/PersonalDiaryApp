@@ -10,13 +10,15 @@ import android.graphics.pdf.PdfDocument
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
+import android.text.StaticLayout
+import android.text.TextPaint
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.util.Pair
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.io.FileOutputStream
@@ -61,7 +63,6 @@ class DownloadNoteActivity : AppCompatActivity() {
             materialDatePicker.addOnPositiveButtonClickListener {
                 tvDatePicker.text = materialDatePicker.headerText
                 val range = materialDatePicker.headerText.split("–")
-                Log.e("eee", range.toString())
                 startDateMillis = getMilliseconds(range[0])
                 endDateMillis = getMilliseconds(range[1])
             }
@@ -94,7 +95,7 @@ class DownloadNoteActivity : AppCompatActivity() {
             val c = Calendar.getInstance()
             c.timeInMillis = note.date
             val date = "${c.get(Calendar.DAY_OF_MONTH)}/${c.get(Calendar.MONTH) + 1}/${c.get(Calendar.YEAR)}"
-            val textPaint = Paint()
+            val textPaint = TextPaint()
             textPaint.color = Color.BLACK
             textPaint.textSize = 160F
             canvas.drawText(date, 850F, 550F, textPaint)
@@ -103,8 +104,34 @@ class DownloadNoteActivity : AppCompatActivity() {
                 canvas.drawBitmap(note.image!!, (bmp.width - note.image.width)/2f, 800f, null)
                 textOffsetY = note.image.height.toFloat()
             }
-            canvas.drawText(note.text, 400F, 1000F + textOffsetY, textPaint)
-            //TODO: RYSOWANIE CHECKBOXÓW
+            val staticLayout = StaticLayout.Builder
+                .obtain(note.text, 0, note.text.length, textPaint, bmp.width - 800)
+                .build()
+            canvas.translate(400F, 1000F + textOffsetY)
+            staticLayout.draw(canvas)
+            canvas.translate(0F, 200F + staticLayout.height)
+
+            for(checkbox in sqliteHelper.getAllCheckbox(note.id)){
+                val cbText = checkbox.text
+                val cbValue = checkbox.value
+
+                val checkBoxDrawable = if(cbValue){
+                    ContextCompat.getDrawable(this, R.drawable.ic_checkmark)!!
+                } else {
+                    ContextCompat.getDrawable(this, R.drawable.ic_baseline_check_box_outline_blank_24)!!
+                }
+
+                checkBoxDrawable.setBounds(0,0,180,180)
+                checkBoxDrawable.draw(canvas)
+
+                canvas.drawText(
+                    "  $cbText",
+                    200F,
+                    135F,
+                    textPaint
+                )
+                canvas.translate(0F, 250F)
+            }
             pdfDocument.finishPage(page)
         }
 

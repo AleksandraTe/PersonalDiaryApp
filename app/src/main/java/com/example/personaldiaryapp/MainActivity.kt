@@ -3,7 +3,6 @@ package com.example.personaldiaryapp
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.SearchView
 import androidx.appcompat.app.AlertDialog
@@ -82,7 +81,6 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("ntText", it.text)
             intent.putExtra("ntColor", it.color)
             intent.putExtra("ntHasImage", it.hasImage)
-            Log.e("EEEE", it.toString())
             startActivity(intent)
         }
 

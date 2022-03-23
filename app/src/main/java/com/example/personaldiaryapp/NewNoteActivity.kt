@@ -174,8 +174,6 @@ class NewNoteActivity : AppCompatActivity() {
         val calendar = Calendar.getInstance()
         calendar.set(dateSplit[2].toInt(), dateSplit[1].toInt() - 1, dateSplit[0].toInt(), 0, 0, 0)
         calendar.set(Calendar.MILLISECOND, 0)
-        Log.e("EEEE", (calendar.timeInMillis).toString())
-        Log.e("EEEE", date)
 
         selectedColor = color!!
 
@@ -202,7 +200,6 @@ class NewNoteActivity : AppCompatActivity() {
         val text = edText.text.toString()
         val color = selectedColor
         var image: Bitmap? = null
-        Log.e("EEEE", hasImage.toString())
         if(hasImage) {
             image = imgNote.drawable.toBitmap()
             val imageMulti : Float = 1000 / image.width.toFloat()
@@ -220,13 +217,11 @@ class NewNoteActivity : AppCompatActivity() {
 
         saveCheckboxesNoteId(sqliteHelper.getNote(calendar.timeInMillis)[0].id)
         val checkboxes = adapter!!.getAllCheckboxes()
-        Log.e("EEEE", checkboxes.toString())
         var i = 0
         for(cb in checkboxes){
             val item = recyclerView.getChildAt(i)
             cb.text = item.findViewById<EditText>(R.id.edCheckbox).text.toString()
             cb.value = item.findViewById<CheckBox>(R.id.cbValue).isChecked
-            Log.e("EEEE", cb.toString())
             sqliteHelper.updateCheckbox(cb)
             i++
         }
@@ -239,12 +234,10 @@ class NewNoteActivity : AppCompatActivity() {
     }
 
     private fun saveNote() {
-        Log.e("EEEE", "START")
         val date = tvDate.text.toString()
         val text = edText.text.toString()
         var color = selectedColor
         var image: Bitmap? = null
-        Log.e("EEEE", hasImage.toString())
         if(hasImage) {
             image = imgNote.drawable.toBitmap()
             val imageMulti : Float = 1000 / image.width.toFloat()
@@ -254,7 +247,6 @@ class NewNoteActivity : AppCompatActivity() {
             Toast.makeText(this, "Please enter requried field", Toast.LENGTH_SHORT).show()
         } else {
             val dateSplit = date.split('/')
-            Log.e("EEEE", dateSplit.toString())
             val calendar = Calendar.getInstance()
             calendar.set(dateSplit[2].toInt(), dateSplit[1].toInt() - 1, dateSplit[0].toInt(), 0, 0, 0)
             calendar.set(Calendar.MILLISECOND, 0)
@@ -265,7 +257,6 @@ class NewNoteActivity : AppCompatActivity() {
 
             saveCheckboxesNoteId(sqliteHelper.getNote(calendar.timeInMillis)[0].id)
             val checkboxes = adapter!!.getAllCheckboxes()
-            Log.e("EEEE", checkboxes.toString())
             var i = 0
             for(cb in checkboxes){
                 val item = recyclerView.getChildAt(i)
@@ -353,7 +344,7 @@ class NewNoteActivity : AppCompatActivity() {
     private fun readStorageTask(){
         if (hasReadStoragePerm()){
 
-            Toast.makeText(this,"permission granted", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,"Permission granted", Toast.LENGTH_SHORT).show()
             pickImageFromGallery()
 
         }else{
@@ -402,10 +393,9 @@ class NewNoteActivity : AppCompatActivity() {
                         imgNote.setImageBitmap(bitmap)
                         imgNote.visibility = View.VISIBLE
                         hasImage = true
-                        Log.e("EEEE", hasImage.toString())
                         selectedImagePath = getPathFromUri(selectedImageUrl)!!
                     }catch (e:Exception){
-                        Log.e("eee347", e.message!!)
+                        Log.e("error", e.message!!)
                     }
                 }
             }
@@ -413,33 +403,47 @@ class NewNoteActivity : AppCompatActivity() {
     }
 
     private fun viewToBitmap():Bitmap{
-
         var dateBitmap = tvDate.drawToBitmap()
         var imgBitmap = imgNote.drawable.toBitmap()
         var textBitmap = edText.drawToBitmap()
 
-
-
-        imgBitmap = Bitmap.createScaledBitmap(imgBitmap, imgBitmap.width * 3 / 2, imgBitmap.height * 3 / 2 , true)
-        dateBitmap = Bitmap.createScaledBitmap(dateBitmap, dateBitmap.width * 5 / 2, dateBitmap.height * 5 / 2, true)
-        textBitmap = Bitmap.createScaledBitmap(textBitmap, textBitmap.width * 5 / 2,  textBitmap.height * 5 / 2, true)
+        imgBitmap = Bitmap.createScaledBitmap(
+            imgBitmap,
+            imgBitmap.width * 3 / 2,
+            imgBitmap.height * 3 / 2 ,
+            true)
+        dateBitmap = Bitmap.createScaledBitmap(
+            dateBitmap,
+            dateBitmap.width * 5 / 2,
+            dateBitmap.height * 5 / 2,
+            true)
+        textBitmap = Bitmap.createScaledBitmap(
+            textBitmap,
+            textBitmap.width * 6 / 2,
+            textBitmap.height * 6 / 2,
+            true)
 
         val bmOverlay = Bitmap.createBitmap(bmp.width, bmp.height, bmp.config)
 
         val canvas = Canvas(bmOverlay)
         canvas.drawBitmap(imgBitmap, (bmp.width - imgBitmap.width)/2f, 800f, null)
-        canvas.drawBitmap(textBitmap, 400F , imgBitmap.height + 1100F, null)
+        canvas.drawBitmap(textBitmap, 700F , imgBitmap.height + 1100F, null)
         canvas.drawBitmap(dateBitmap, 400F, 350F, null)
         var i = 0
         for(item in recyclerView.children){
             var itemBitmap = item.drawToBitmap()
-            itemBitmap = Bitmap.createScaledBitmap(itemBitmap, item.width * 2, item.height * 2, true)
-            canvas.drawBitmap(itemBitmap, 300F, imgBitmap.height + textBitmap.height + 1900F + 300F * i, null)
+            itemBitmap = Bitmap.createScaledBitmap(
+                itemBitmap,
+                item.width * 3,
+                item.height * 3,
+                true)
+            canvas.drawBitmap(itemBitmap,
+                700F,
+                imgBitmap.height + textBitmap.height + 1000F + 300F * i,
+                null)
             i++
         }
-
         return bmOverlay
-
     }
 
     private fun downloadPdf(){
